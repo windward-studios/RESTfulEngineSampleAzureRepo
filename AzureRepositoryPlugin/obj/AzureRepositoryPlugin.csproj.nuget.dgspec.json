@@ -1,0 +1,114 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj": {}
+  },
+  "projects": {
+    "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj",
+        "projectName": "AzureRepositoryPlugin",
+        "projectPath": "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj",
+        "packagesPath": "C:\\Users\\cjshore\\.nuget\\packages\\",
+        "outputPath": "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\cjshore\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "D:\\WindwardNEXT\\publish": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://windwardstudios.pkgs.visualstudio.com/c97b7043-8178-4ae0-8408-d8113e68f333/_packaging/MaestroNuGetRepo/nuget/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.0": {
+            "targetAlias": "netstandard2.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.0": {
+          "targetAlias": "netstandard2.0",
+          "dependencies": {
+            "Azure.Storage.Blobs": {
+              "target": "Package",
+              "version": "[12.8.0, )"
+            },
+            "MassTransit": {
+              "target": "Package",
+              "version": "[6.1.0, )"
+            },
+            "MassTransit.ActiveMQ": {
+              "target": "Package",
+              "version": "[6.1.0, )"
+            },
+            "MassTransit.AmazonSQS": {
+              "target": "Package",
+              "version": "[6.1.0, )"
+            },
+            "MassTransit.Azure.ServiceBus.Core": {
+              "target": "Package",
+              "version": "[6.1.0, )"
+            },
+            "MassTransit.RabbitMQ": {
+              "target": "Package",
+              "version": "[6.1.0, )"
+            },
+            "Microsoft.Azure.Cosmos": {
+              "target": "Package",
+              "version": "[3.16.0, )"
+            },
+            "Microsoft.Azure.Cosmos.Table": {
+              "target": "Package",
+              "version": "[1.0.8, )"
+            },
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "NETStandard.Library": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.0.3, )",
+              "autoReferenced": true
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
+            "log4net": {
+              "target": "Package",
+              "version": "[2.0.12, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
