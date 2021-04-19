@@ -10,7 +10,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Kailua.net.windward.utils;
+//using Kailua.net.windward.utils;
 
 namespace RESTfulEngine.Models
 {
@@ -26,14 +26,14 @@ namespace RESTfulEngine.Models
 		}
 
 		/// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
-		public ImportMetrics(net.windward.api.csharp.ImportMetrics  src)
-		{
-			Type = src.Type.ToString();
-			Tag = src.Tag;
-			Filename = src.Filename;
-			if (src.Children != null && src.Children.Count > 0)
-				Children = Factory(src.Children);
-		}
+		//public ImportMetrics(net.windward.api.csharp.ImportMetrics  src)
+		//{
+		//	Type = src.Type.ToString();
+		//	Tag = src.Tag;
+		//	Filename = src.Filename;
+		//	if (src.Children != null && src.Children.Count > 0)
+		//		Children = Factory(src.Children);
+		//}
 
 		/// <summary>
 		/// The type of imported file.
@@ -64,13 +64,13 @@ namespace RESTfulEngine.Models
 		/// </summary>
 		/// <param name="generatedReportImportInfo">The engine ImportMetrics.</param>
 		/// <returns>The built up list of metrics.</returns>
-		public static ImportMetrics[] Factory(ICollection<net.windward.api.csharp.ImportMetrics> generatedReportImportInfo)
-		{
-			List<ImportMetrics> list = new List<ImportMetrics>();
-			Trap.trap();
-			foreach (net.windward.api.csharp.ImportMetrics metrics in generatedReportImportInfo)
-				list.Add(new ImportMetrics(metrics));
-			return list.ToArray();
-		}
+		//public static ImportMetrics[] Factory(ICollection<net.windward.api.csharp.ImportMetrics> generatedReportImportInfo)
+		//{
+		//	List<ImportMetrics> list = new List<ImportMetrics>();
+		//	Trap.trap();
+		//	foreach (net.windward.api.csharp.ImportMetrics metrics in generatedReportImportInfo)
+		//		list.Add(new ImportMetrics(metrics));
+		//	return list.ToArray();
+		//}
 	}
 }

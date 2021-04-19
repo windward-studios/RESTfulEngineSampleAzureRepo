@@ -10,9 +10,9 @@
 
 using System;
 using System.Runtime.Serialization;
-using java.math;
-using Kailua.net.windward.utils;
-using net.windward.util.datetime;
+//using java.math;
+//using Kailua.net.windward.utils;
+//using net.windward.util.datetime;
 
 namespace RESTfulEngine.Models
 {
@@ -89,7 +89,7 @@ namespace RESTfulEngine.Models
 				return;
 			}
 
-			Trap.trap();
+			//Trap.trap();
 			throw new ArgumentException($"Unknown value Type {varValue.GetType().Name}");
 		}
 
@@ -130,16 +130,16 @@ namespace RESTfulEngine.Models
 						if (!RawValue.Contains("."))
 							return Convert.ToInt64(RawValue);
 						return Convert.ToDouble(RawValue);
-					case "decimal":
-						if (!RawValue.Contains("."))
-							return new BigInteger(RawValue);
-						return new BigDecimal(RawValue);
-					case "datetime":
-						// LocalDateTime: 2003-10-30T22:09:17
-						// ZonedDateTime: 2018-10-21T08:11:55-06:00[America/Denver] 
-						// OffsetDateTime: 2003-10-30T22:09:17-08:00 or 2003-10-30T22:09:17Z
-						// C# doesn't have a ZonedDateTime
-						return WindwardDateTime.parse(RawValue);
+					//case "decimal":
+					//	if (!RawValue.Contains("."))
+					//		return new BigInteger(RawValue);
+					//	return new BigDecimal(RawValue);
+					//case "datetime":
+					//	// LocalDateTime: 2003-10-30T22:09:17
+					//	// ZonedDateTime: 2018-10-21T08:11:55-06:00[America/Denver] 
+					//	// OffsetDateTime: 2003-10-30T22:09:17-08:00 or 2003-10-30T22:09:17Z
+					//	// C# doesn't have a ZonedDateTime
+					//	return WindwardDateTime.parse(RawValue);
 				}
 
 				throw new ArgumentException($"Unknown ParamType {ParamType}");

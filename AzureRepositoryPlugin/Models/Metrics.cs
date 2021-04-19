@@ -8,11 +8,11 @@
 * with Windward Studios, Inc.
 */
 
-using net.windward.api.csharp;
+//using net.windward.api.csharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using WindwardReport = net.windward.api.csharp.Report;
+//using WindwardReport = net.windward.api.csharp.Report;
 
 namespace RESTfulEngine.Models
 {
@@ -27,17 +27,17 @@ namespace RESTfulEngine.Models
 		{
 		}
 
-		internal Metrics(Template template, TemplateMetrics src)
-		{
-			Guid = template.Guid;
-			Tag = template.Tag;
-			TemplateType = TemplateTypeToString(src.TemplateType);
-			Datasources = src.Datasources.ToArray();
-			Vars = src.Vars.ToArray();
-			Variables = MakeVariablesArray(src.TemplateVariables);
-			DatasourceProfiles = MakeTemplateDatasourcesArray(src.DataSourceProfiles);
-			AutotagVersion = src.AutotagVersion;
-		}
+		//internal Metrics(Template template, TemplateMetrics src)
+		//{
+		//	Guid = template.Guid;
+		//	Tag = template.Tag;
+		//	TemplateType = TemplateTypeToString(src.TemplateType);
+		//	Datasources = src.Datasources.ToArray();
+		//	Vars = src.Vars.ToArray();
+		//	Variables = MakeVariablesArray(src.TemplateVariables);
+		//	DatasourceProfiles = MakeTemplateDatasourcesArray(src.DataSourceProfiles);
+		//	AutotagVersion = src.AutotagVersion;
+		//}
 
 		/// <summary>
 		/// The guid of this async job.
@@ -93,97 +93,97 @@ namespace RESTfulEngine.Models
         public string AutotagVersion { get; set; }
 
 
-		private static string TemplateTypeToString(WindwardReport.TEMPLATE_TYPE type)
-        {
-            switch (type)
-            {
-                case WindwardReport.TEMPLATE_TYPE.DOCX:
-                case WindwardReport.TEMPLATE_TYPE.DOCM:
-                    return "docx";
-                case WindwardReport.TEMPLATE_TYPE.HTML:
-                    return "html";
-                case WindwardReport.TEMPLATE_TYPE.PPTX:
-                case WindwardReport.TEMPLATE_TYPE.PPTM:
-                    return "pptx";
-                case WindwardReport.TEMPLATE_TYPE.UNKNOWN:
-                    return "unknown";
-                case WindwardReport.TEMPLATE_TYPE.XLSX:
-                case WindwardReport.TEMPLATE_TYPE.XLSM:
-                    return "xlsx";
-                default:
-                    return "";
-            }
-        }
+		//private static string TemplateTypeToString(WindwardReport.TEMPLATE_TYPE type)
+  //      {
+  //          switch (type)
+  //          {
+  //              case WindwardReport.TEMPLATE_TYPE.DOCX:
+  //              case WindwardReport.TEMPLATE_TYPE.DOCM:
+  //                  return "docx";
+  //              case WindwardReport.TEMPLATE_TYPE.HTML:
+  //                  return "html";
+  //              case WindwardReport.TEMPLATE_TYPE.PPTX:
+  //              case WindwardReport.TEMPLATE_TYPE.PPTM:
+  //                  return "pptx";
+  //              case WindwardReport.TEMPLATE_TYPE.UNKNOWN:
+  //                  return "unknown";
+  //              case WindwardReport.TEMPLATE_TYPE.XLSX:
+  //              case WindwardReport.TEMPLATE_TYPE.XLSM:
+  //                  return "xlsx";
+  //              default:
+  //                  return "";
+  //          }
+  //      }
 
-        private static Variable[] MakeVariablesArray(IList<TemplateVariable> vars)
-        {
-            List<Variable> allVars = new List<Variable>();
+  //      private static Variable[] MakeVariablesArray(IList<TemplateVariable> vars)
+  //      {
+  //          List<Variable> allVars = new List<Variable>();
 
-            foreach (var v in vars)
-            {
-                allVars.Add(Variable.Create(v));
-            }
+  //          foreach (var v in vars)
+  //          {
+  //              allVars.Add(Variable.Create(v));
+  //          }
 
-            return allVars.ToArray();
-        }
+  //          return allVars.ToArray();
+  //      }
 
 
-		private static DatasourceProfile[] MakeTemplateDatasourcesArray(List<TemplateMetrics.DataSourceProfile> datasources)
-        {
-            List<DatasourceProfile> allEntries = new List<DatasourceProfile>();
+		//private static DatasourceProfile[] MakeTemplateDatasourcesArray(List<TemplateMetrics.DataSourceProfile> datasources)
+  //      {
+  //          List<DatasourceProfile> allEntries = new List<DatasourceProfile>();
 
-            foreach (var d in datasources)
-            {
-                var datasource = d.Properties;
-				DatasourceProfile tds = new DatasourceProfile();
-                List<Entry> entries = new List<Entry>();
-                foreach (var entry in datasource)
-                {
-                    entries.Add(new Entry() { Key = entry.Key, Value = entry.Value });
-                }
-                entries.Add(new Entry()
-                {
-                    Key = "full-type",
-                    Value = d.VendorType
-                });
-                string simpleType = "";
-                switch (d.VendorType)
-                {
-                    case "AdoDataSourceInfo":
-                        simpleType = "sql";
-                        break;
-                    case "JsonDataSourceInfo":
-                        simpleType = "json";
-                        break;
-                    case "ODataSourceInfo":
-                        simpleType = "odata";
-                        break;
-                    case "XmlDataSourceInfo":
-                        simpleType = "xml";
-                        break;
-                    case "SaxonDataSourceInfo":
-                        simpleType = "xml2";
-                        break;
-                    case "SFDataSourceInfo":
-                        simpleType = "salesforce";
-                        break;
-                    default:
-                        break;
-                }
-                entries.Add(new Entry()
-                {
-                    Key = "simple-type",
-                    Value = simpleType
-                });
-                entries.Add(new Entry(){
-                    Key = "datasource-name",
-                    Value = d.Name
-                });
-                tds.Properties = entries.ToArray();
-                allEntries.Add(tds);
-            }
+  //          foreach (var d in datasources)
+  //          {
+  //              var datasource = d.Properties;
+		//		DatasourceProfile tds = new DatasourceProfile();
+  //              List<Entry> entries = new List<Entry>();
+  //              foreach (var entry in datasource)
+  //              {
+  //                  entries.Add(new Entry() { Key = entry.Key, Value = entry.Value });
+  //              }
+  //              entries.Add(new Entry()
+  //              {
+  //                  Key = "full-type",
+  //                  Value = d.VendorType
+  //              });
+  //              string simpleType = "";
+  //              switch (d.VendorType)
+  //              {
+  //                  case "AdoDataSourceInfo":
+  //                      simpleType = "sql";
+  //                      break;
+  //                  case "JsonDataSourceInfo":
+  //                      simpleType = "json";
+  //                      break;
+  //                  case "ODataSourceInfo":
+  //                      simpleType = "odata";
+  //                      break;
+  //                  case "XmlDataSourceInfo":
+  //                      simpleType = "xml";
+  //                      break;
+  //                  case "SaxonDataSourceInfo":
+  //                      simpleType = "xml2";
+  //                      break;
+  //                  case "SFDataSourceInfo":
+  //                      simpleType = "salesforce";
+  //                      break;
+  //                  default:
+  //                      break;
+  //              }
+  //              entries.Add(new Entry()
+  //              {
+  //                  Key = "simple-type",
+  //                  Value = simpleType
+  //              });
+  //              entries.Add(new Entry(){
+  //                  Key = "datasource-name",
+  //                  Value = d.Name
+  //              });
+  //              tds.Properties = entries.ToArray();
+  //              allEntries.Add(tds);
+  //          }
 
-            return allEntries.ToArray();
-        }
+  //          return allEntries.ToArray();
+  //      }
     }
 }

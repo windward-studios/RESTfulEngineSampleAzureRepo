@@ -8,7 +8,7 @@
 * with Windward Studios, Inc.
 */
 
-using net.windward.api.csharp;
+//using net.windward.api.csharp;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -128,84 +128,84 @@ namespace RESTfulEngine.Models
         /// </summary>
         /// <param name="var"></param>
         /// <returns></returns>
-        public static Variable Create(TemplateVariable var)
-        {
-            Variable v = new Variable();
+   //     public static Variable Create(TemplateVariable var)
+   //     {
+   //         Variable v = new Variable();
 
-            v.Name = var.Name;
-            v.Description = var.Description;
-            v.Type = TypeToString(var.VarType);
-            v.UdtGuid = var.UdtGuid;
-            v.Required = var.Required;
-            v.AllowAll = var.AllowAll;
-            v.AllowList = var.AllowList;
-            v.AllowFilter = var.AllowFilter;
-            v.AllowSort = var.AllowSort;
-            v.AutoMetadata = var.AutoMetadata;
-            v.DefaultValues = MakeValuesArray(var.DefaultValues);
-            v.AllowedValues = MakeValuesArray(var.AllowedValues);
-            v.Datasource = var.Datasource;
-            v.CalOffset = CalOffsetToString(var.CalOffset);
-			v.Select = var.Select;
-			v.SelectFormat = var.SelectFormat;
+   //         v.Name = var.Name;
+   //         v.Description = var.Description;
+   //         v.Type = TypeToString(var.VarType);
+   //         v.UdtGuid = var.UdtGuid;
+   //         v.Required = var.Required;
+   //         v.AllowAll = var.AllowAll;
+   //         v.AllowList = var.AllowList;
+   //         v.AllowFilter = var.AllowFilter;
+   //         v.AllowSort = var.AllowSort;
+   //         v.AutoMetadata = var.AutoMetadata;
+   //         v.DefaultValues = MakeValuesArray(var.DefaultValues);
+   //         v.AllowedValues = MakeValuesArray(var.AllowedValues);
+   //         v.Datasource = var.Datasource;
+   //         v.CalOffset = CalOffsetToString(var.CalOffset);
+			//v.Select = var.Select;
+			//v.SelectFormat = var.SelectFormat;
 
-            return v;
-        }
+   //         return v;
+   //     }
 
-        private static string TypeToString(TemplateVariable.VAR_TYPE type)
-        {
-            switch (type)
-            {
-                case TemplateVariable.VAR_TYPE.AUTO_SELECT:
-                    return "auto_select";
-                case TemplateVariable.VAR_TYPE.BOOLEAN:
-                    return "boolean";
-                case TemplateVariable.VAR_TYPE.CURRENCY:
-                    return "currency";
-                case TemplateVariable.VAR_TYPE.DATE:
-                    return "datetime";
-                case TemplateVariable.VAR_TYPE.FLOAT:
-                    return "float";
-                case TemplateVariable.VAR_TYPE.INTEGER:
-                    return "int";
-                case TemplateVariable.VAR_TYPE.SELECT:
-                    return "select";
-                case TemplateVariable.VAR_TYPE.TEXT:
-                    return "text";
-                default:
-                    return "";
-            }
-        }
+   //     private static string TypeToString(TemplateVariable.VAR_TYPE type)
+   //     {
+   //         switch (type)
+   //         {
+   //             case TemplateVariable.VAR_TYPE.AUTO_SELECT:
+   //                 return "auto_select";
+   //             case TemplateVariable.VAR_TYPE.BOOLEAN:
+   //                 return "boolean";
+   //             case TemplateVariable.VAR_TYPE.CURRENCY:
+   //                 return "currency";
+   //             case TemplateVariable.VAR_TYPE.DATE:
+   //                 return "datetime";
+   //             case TemplateVariable.VAR_TYPE.FLOAT:
+   //                 return "float";
+   //             case TemplateVariable.VAR_TYPE.INTEGER:
+   //                 return "int";
+   //             case TemplateVariable.VAR_TYPE.SELECT:
+   //                 return "select";
+   //             case TemplateVariable.VAR_TYPE.TEXT:
+   //                 return "text";
+   //             default:
+   //                 return "";
+   //         }
+   //     }
 
-        private static string CalOffsetToString(TemplateVariable.CAL_OFFSET off)
-        {
-            switch (off)
-            {
-                case TemplateVariable.CAL_OFFSET.FIXED:
-                    return "fixed";
-                case TemplateVariable.CAL_OFFSET.START_OF_MONTH:
-                    return "start_of_month";
-                case TemplateVariable.CAL_OFFSET.START_OF_QUARTER:
-                    return "start_of_quarter";
-                case TemplateVariable.CAL_OFFSET.START_OF_WEEK:
-                    return "start_of_week";
-                case TemplateVariable.CAL_OFFSET.START_OF_YEAR:
-                    return "start_of_year";
-                case TemplateVariable.CAL_OFFSET.TODAY:
-                    return "today";
-                default:
-                    return "";
-            }
-        }
+   //     private static string CalOffsetToString(TemplateVariable.CAL_OFFSET off)
+   //     {
+   //         switch (off)
+   //         {
+   //             case TemplateVariable.CAL_OFFSET.FIXED:
+   //                 return "fixed";
+   //             case TemplateVariable.CAL_OFFSET.START_OF_MONTH:
+   //                 return "start_of_month";
+   //             case TemplateVariable.CAL_OFFSET.START_OF_QUARTER:
+   //                 return "start_of_quarter";
+   //             case TemplateVariable.CAL_OFFSET.START_OF_WEEK:
+   //                 return "start_of_week";
+   //             case TemplateVariable.CAL_OFFSET.START_OF_YEAR:
+   //                 return "start_of_year";
+   //             case TemplateVariable.CAL_OFFSET.TODAY:
+   //                 return "today";
+   //             default:
+   //                 return "";
+   //         }
+   //     }
 
-        private static VariableValue[] MakeValuesArray(IList<TemplateVariableValue> vals)
-        {
-            List<VariableValue> allVals = new List<VariableValue>();
+   //     private static VariableValue[] MakeValuesArray(IList<TemplateVariableValue> vals)
+   //     {
+   //         List<VariableValue> allVals = new List<VariableValue>();
 
-            foreach (var val in vals)
-                allVals.Add(VariableValue.Create(val));
+   //         foreach (var val in vals)
+   //             allVals.Add(VariableValue.Create(val));
 
-            return allVals.ToArray();
-        }
+   //         return allVals.ToArray();
+   //     }
     }
 }

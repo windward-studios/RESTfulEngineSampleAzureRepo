@@ -28,14 +28,14 @@ namespace RESTfulEngine.Models
 		}
 
 		/// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
-		public Issue(net.windward.api.csharp.errorhandling.Issue src)
-		{
-			Message = src.Message;
-			IsError = src.IsError;
-			IsWarning = src.IsWarning;
-			IssueType = src.Type.ToString();
-			Tag = src.Tag.FullTag;
-		}
+		//public Issue(net.windward.api.csharp.errorhandling.Issue src)
+		//{
+		//	Message = src.Message;
+		//	IsError = src.IsError;
+		//	IsWarning = src.IsWarning;
+		//	IssueType = src.Type.ToString();
+		//	Tag = src.Tag.FullTag;
+		//}
 
 		/// <summary>
         /// A textual description of this issue.

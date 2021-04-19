@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using log4net;
-using net.windward.util.AccessProviders;
+//using net.windward.util.AccessProviders;
 using RESTfulEngine.Models.version1;
 
 namespace RESTfulEngine.Models
@@ -42,8 +42,8 @@ namespace RESTfulEngine.Models
 			OutputFormat = src.OutputFormat;
 
 			Data = src.Data;
-			if (! string.IsNullOrEmpty(src.Uri))
-				ConnectionString = $"{BaseAccessProvider.CONNECTION_URL}={src.Uri}";
+			//if (! string.IsNullOrEmpty(src.Uri))
+			//	ConnectionString = $"{BaseAccessProvider.CONNECTION_URL}={src.Uri}";
 			if (Log.IsDebugEnabled)
 				Log.Debug($"src.Uri = {src.Uri}; ConnectionString = {ConnectionString}; Data[len] = {(Data == null ? "mull" : Convert.ToString(Data.Length))}");
 

@@ -1,4 +1,4 @@
-﻿using net.windward.api.csharp;
+﻿//using net.windward.api.csharp;
 using System.Runtime.Serialization;
 
 namespace RESTfulEngine.Models
@@ -38,31 +38,31 @@ namespace RESTfulEngine.Models
         /// </summary>
         /// <param name="val">the engine TemplateVariableValue.</param>
         /// <returns>The converted VariableValue.</returns>
-        public static VariableValue Create(TemplateVariableValue val)
-        {
-            VariableValue v = new VariableValue();
+        //public static VariableValue Create(TemplateVariableValue val)
+        //{
+        //    VariableValue v = new VariableValue();
 
-            v.Label = val.Label;
-            v.Name = val.Name;
-            v.Value = new ParamValue(val.Value);
-            v.ValueReference = ValueReferenceToString(val.ValueReference);
+        //    v.Label = val.Label;
+        //    v.Name = val.Name;
+        //    v.Value = new ParamValue(val.Value);
+        //    v.ValueReference = ValueReferenceToString(val.ValueReference);
 
-            return v;
-        }
+        //    return v;
+        //}
 
-        private static string ValueReferenceToString(TemplateVariableValue.VALUE_REFERENCE valRef)
-        {
-            switch (valRef)
-            {
-                case TemplateVariableValue.VALUE_REFERENCE.LITERAL:
-                    return "literal";
-                case TemplateVariableValue.VALUE_REFERENCE.PARAM_VALUE:
-                    return "param_value";
-                case TemplateVariableValue.VALUE_REFERENCE.SELECT:
-                    return "select";
-                default:
-                    return "";
-            }
-        }
+        //private static string ValueReferenceToString(TemplateVariableValue.VALUE_REFERENCE valRef)
+        //{
+        //    switch (valRef)
+        //    {
+        //        case TemplateVariableValue.VALUE_REFERENCE.LITERAL:
+        //            return "literal";
+        //        case TemplateVariableValue.VALUE_REFERENCE.PARAM_VALUE:
+        //            return "param_value";
+        //        case TemplateVariableValue.VALUE_REFERENCE.SELECT:
+        //            return "select";
+        //        default:
+        //            return "";
+        //    }
+        //}
     }
 }
