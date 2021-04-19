@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj": {}
+    "C:\\WindwardNEXT\\AzureRepository\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj": {}
   },
   "projects": {
-    "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj": {
+    "C:\\WindwardNEXT\\AzureRepository\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj",
+        "projectUniqueName": "C:\\WindwardNEXT\\AzureRepository\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj",
         "projectName": "AzureRepositoryPlugin",
-        "projectPath": "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj",
-        "packagesPath": "C:\\Users\\cjshore\\.nuget\\packages\\",
-        "outputPath": "D:\\WindwardNEXT\\AzureRepositoryPlugin\\AzureRepositoryPlugin\\obj\\",
+        "projectPath": "C:\\WindwardNEXT\\AzureRepository\\AzureRepositoryPlugin\\AzureRepositoryPlugin.csproj",
+        "packagesPath": "C:\\Users\\conno\\.nuget\\packages\\",
+        "outputPath": "C:\\WindwardNEXT\\AzureRepository\\AzureRepositoryPlugin\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\cjshore\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\conno\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -25,13 +22,13 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "D:\\WindwardNEXT\\publish": {},
+          "http://windward-internal-packages.azurewebsites.net/": {},
+          "http://windward-internal-packages.azurewebsites.net/nuget": {},
           "https://api.nuget.org/v3/index.json": {},
           "https://windwardstudios.pkgs.visualstudio.com/c97b7043-8178-4ae0-8408-d8113e68f333/_packaging/MaestroNuGetRepo/nuget/v3/index.json": {}
         },
         "frameworks": {
           "netstandard2.0": {
-            "targetAlias": "netstandard2.0",
             "projectReferences": {}
           }
         },
@@ -43,7 +40,6 @@
       },
       "frameworks": {
         "netstandard2.0": {
-          "targetAlias": "netstandard2.0",
           "dependencies": {
             "Azure.Storage.Blobs": {
               "target": "Package",
@@ -106,7 +102,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

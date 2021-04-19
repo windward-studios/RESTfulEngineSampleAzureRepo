@@ -7,8 +7,6 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Windward.Hub.Exceptions.NotFound;
-using Windward.Hub.Exceptions.Duplicate;
 using Windward.Hub.StorageContract.Filtering;
 
 namespace AzureStorage.Tables
@@ -151,11 +149,11 @@ namespace AzureStorage.Tables
             int count = ret.Count();
             if (count == 0)
             {
-                throw new TableRowNotFoundException(filter);
+                throw new Exception($"TABLE ROW NOT FOUND EXCEPTION: {filter}");
             }
             if (count > 1)
             {
-                throw new DuplicateTableRowException(filter);
+                throw new Exception($"DUPLICATE TABLE ROW EXCEPTION: {filter}");
             }
 
             return ret[0];
