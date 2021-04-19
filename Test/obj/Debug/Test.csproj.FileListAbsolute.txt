@@ -1,0 +1,5 @@
+C:\WindwardNEXT\AzureRepository\Test\obj\Debug\Test.csproj.CoreCompileInputs.cache
+C:\WindwardNEXT\AzureRepository\Test\bin\Debug\Test.dll
+C:\WindwardNEXT\AzureRepository\Test\bin\Debug\Test.pdb
+C:\WindwardNEXT\AzureRepository\Test\obj\Debug\Test.dll
+C:\WindwardNEXT\AzureRepository\Test\obj\Debug\Test.pdb
