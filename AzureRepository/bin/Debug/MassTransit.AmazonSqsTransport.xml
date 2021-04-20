@@ -1,0 +1,737 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MassTransit.AmazonSqsTransport</name>
+    </assembly>
+    <members>
+        <member name="M:MassTransit.AmazonSqsTransport.AmazonSqsBusFactory.Create(System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator})">
+            <summary>
+            Configure and create a bus for AmazonSQS
+            </summary>
+            <param name="configure">The configuration callback to configure the bus</param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.AmazonSqsEndpointDefinitionExtensions.Apply(MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator,MassTransit.IEndpointDefinition,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator})">
+            <summary>
+            We may want to have a builder/endpoint context that could store things like management endpoint, etc. to configure
+            filters and add configuration interfaces for things like concurrency limit and prefetch count
+            </summary>
+            <param name="configurator"></param>
+            <param name="definition"></param>
+            <param name="configure">The callback to invoke after the definition configuration has been applied</param>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.AmazonSqsHostSettings">
+            <summary>
+            Settings to configure a AmazonSQS host explicitly without requiring the fluent interface
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.AmazonSqsHostSettings.Region">
+            <summary>
+                The AmazonSQS region to connect
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.AmazonSqsHostSettings.AccessKey">
+            <summary>
+                The AccessKey for connecting to the host
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.AmazonSqsHostSettings.SecretKey">
+            <summary>
+                The password for connection to the host
+                MAYBE this should be a SecureString instead of a regular string
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.AmazonSqsHostConfigurationExtensions.Host(MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator,System.Uri,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsHostConfigurator})">
+            <summary>
+                Configure a AmazonSQS host using the configuration API
+            </summary>
+            <param name="configurator"></param>
+            <param name="hostAddress">The URI host address of the AmazonSQS host (amazonsqs://region)</param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.AmazonSqsHostConfigurationExtensions.Host(MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator,System.String,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsHostConfigurator})">
+            <summary>
+            Configure a AmazonSQS host with a host name and virtual host
+            </summary>
+            <param name="configurator"></param>
+            <param name="hostName">The host name of the broker</param>
+            <param name="configure">The configuration callback</param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.AmazonSqsHostConfigurationExtensions.ReceiveEndpoint(MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator,MassTransit.AmazonSqsTransport.IAmazonSqsHost,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator})">
+            <summary>
+            Declare a ReceiveEndpoint using a unique generated queue name. This queue defaults to auto-delete
+            and non-durable. By default all services bus instances include a default receiveEndpoint that is
+            of this type (created automatically upon the first receiver binding).
+            </summary>
+            <param name="configurator"></param>
+            <param name="host"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.AmazonSqsHostConfigurationExtensions.ReceiveEndpoint(MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator,MassTransit.AmazonSqsTransport.IAmazonSqsHost,MassTransit.IEndpointDefinition,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator})">
+            <summary>
+            Declare a ReceiveEndpoint using a unique generated queue name. This queue defaults to auto-delete
+            and non-durable. By default all services bus instances include a default receiveEndpoint that is
+            of this type (created automatically upon the first receiver binding).
+            </summary>
+            <param name="configurator"></param>
+            <param name="host"></param>
+            <param name="definition"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.AmazonSqsHostConfigurationExtensions.ReceiveEndpoint(MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator})">
+            <summary>
+            Declare a ReceiveEndpoint using a unique generated queue name. This queue defaults to auto-delete
+            and non-durable. By default all services bus instances include a default receiveEndpoint that is
+            of this type (created automatically upon the first receiver binding).
+            </summary>
+            <param name="configurator"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.AmazonSqsHostConfigurationExtensions.ReceiveEndpoint(MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator,MassTransit.IEndpointDefinition,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator})">
+            <summary>
+            Declare a ReceiveEndpoint using a unique generated queue name. This queue defaults to auto-delete
+            and non-durable. By default all services bus instances include a default receiveEndpoint that is
+            of this type (created automatically upon the first receiver binding).
+            </summary>
+            <param name="configurator"></param>
+            <param name="definition"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.AmazonSqsMessageSchedulerExtensions.UseAmazonSqsMessageScheduler(MassTransit.IBusFactoryConfigurator)">
+            <summary>
+            Uses the Amazon SQS delayed messages to schedule messages for future delivery. A lightweight
+            alternative to Quartz, which does not require any storage outside of AmazonSqs.
+            </summary>
+            <param name="configurator"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.BusFactoryConfiguratorExtensions.CreateUsingAmazonSqs(MassTransit.IBusFactorySelector,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator})">
+            <summary>
+            Select AmazonSQS as the transport for the service bus
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.Configuration.IAmazonSqsBusConfiguration.CreateEndpointConfiguration">
+            <summary>
+            Create an endpoint configuration on the bus, which can later be turned into a receive endpoint
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.Configuration.IAmazonSqsHostConfiguration.DeployTopologyOnly">
+            <summary>
+            If true, only the broker topology will be deployed
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.Configuration.IAmazonSqsHostConfiguration.CreateReceiveEndpointConfiguration(System.String,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator})">
+            <summary>
+            Create a receive endpoint configuration using the specified host
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.Configuration.IAmazonSqsHostConfiguration.CreateReceiveEndpointConfiguration(MassTransit.AmazonSqsTransport.Topology.Settings.QueueReceiveSettings,MassTransit.AmazonSqsTransport.Configuration.Configuration.IAmazonSqsEndpointConfiguration,System.Action{MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator})">
+            <summary>
+            Create a receive endpoint configuration for the default host
+            </summary>
+            <param name="settings"></param>
+            <param name="endpointConfiguration"></param>
+            <param name="configure"></param>
+            <returns></returns>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator.DeployTopologyOnly">
+            <summary>
+            Set to true if the topology should be deployed only
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator.Send``1(System.Action{MassTransit.AmazonSqsTransport.Topology.Configuration.IAmazonSqsMessageSendTopologyConfigurator{``0}})">
+            <summary>
+            Configure the send topology of the message type
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="configureTopology"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator.Publish``1(System.Action{MassTransit.AmazonSqsTransport.Topology.Configuration.IAmazonSqsMessagePublishTopologyConfigurator{``0}})">
+            <summary>
+            Configure the send topology of the message type
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="configureTopology"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator.OverrideDefaultBusEndpointQueueName(System.String)">
+            <summary>
+            In most cases, this is not needed and should not be used. However, if for any reason the default bus
+            endpoint queue name needs to be changed, this will do it. Do NOT set it to the same name as a receive
+            endpoint or you will screw things up.
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsBusFactoryConfigurator.Host(MassTransit.AmazonSqsTransport.AmazonSqsHostSettings)">
+            <summary>
+            Configure a Host that can be connected. If only one host is specified, it is used as the default
+            host for receive endpoints.
+            </summary>
+            <param name="settings"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsHostConfigurator.AccessKey(System.String)">
+            <summary>
+            Sets the accessKey for the connection to AmazonSQS/AmazonSNS
+            </summary>
+            <param name="accessKey"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsHostConfigurator.SecretKey(System.String)">
+            <summary>
+            Sets the secretKey for the connection to AmazonSQS/AmazonSNS
+            </summary>
+            <param name="secretKey"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsHostConfigurator.Credentials(Amazon.Runtime.AWSCredentials)">
+            <summary>
+            Sets the credentials for the connection to AmazonSQS/AmazonSNS
+            This is an alternative to using AccessKey() and SecretKey()
+            See https://docs.aws.amazon.com/sdkfornet1/latest/apidocs/html/T_Amazon_Runtime_AWSCredentials.htm for usages
+            </summary>
+            <param name="credentials"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsHostConfigurator.Scope(System.String)">
+            <summary>
+            Set scope for AmazonSQS. Will be used as a prefix for queue/topic name
+            </summary>
+            <param name="scope"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsHostConfigurator.Config(Amazon.SQS.AmazonSQSConfig)">
+            <summary>
+            Sets the default config for the connection to AmazonSQS
+            </summary>
+            <param name="config"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsHostConfigurator.Config(Amazon.SimpleNotificationService.AmazonSimpleNotificationServiceConfig)">
+            <summary>
+            Sets the default config for the connection to AmazonSNS
+            </summary>
+            <param name="config"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsHostConfigurator.AllowTransportHeader(MassTransit.Transports.AllowTransportHeader)">
+            <summary>
+            Specifies a method used to determine if a header should be copied to the transport message
+            </summary>
+            <param name="allowTransportHeader"></param>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator">
+            <summary>
+            Configure a receiving AmazonSQS endpoint
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator.SubscribeMessageTopics">
+            <summary>
+            If true, creates message consumers for the message types in consumers, handlers, etc.
+            With AmazonSQS, these are virtual consumers tied to the virtual topics
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator.Subscribe``1(System.Action{MassTransit.AmazonSqsTransport.Configuration.ITopicSubscriptionConfigurator})">
+            <summary>
+            Bind an existing exchange for the message type to the receive endpoint by name
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Configuration.IAmazonSqsReceiveEndpointConfigurator.Subscribe(System.String,System.Action{MassTransit.AmazonSqsTransport.Configuration.ITopicSubscriptionConfigurator})">
+            <summary>
+            Bind an exchange to the receive endpoint exchange
+            </summary>
+            <param name="topicName">The exchange name</param>
+            <param name="callback">Configure the exchange and binding</param>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Configuration.IQueueConfigurator">
+            <summary>
+            Configures a queue/exchange pair in AmazonSQS
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.IQueueConfigurator.Durable">
+            <summary>
+            Specify the queue should be durable (survives broker restart) or in-memory
+            </summary>
+            <value>True for a durable queue, False for an in-memory queue</value>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.IQueueConfigurator.AutoDelete">
+            <summary>
+            Specify that the queue (and the exchange of the same name) should be created as auto-delete
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.IQueueConfigurator.QueueAttributes">
+            <summary>
+            Specify optional <see href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html">attributes</see> for the queue.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.IQueueConfigurator.QueueSubscriptionAttributes">
+            <summary>
+            Additional <see href="https://docs.aws.amazon.com/sns/latest/api/API_SetSubscriptionAttributes.html">attributes</see> for the queue's subscription.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.IQueueConfigurator.QueueTags">
+            <summary>
+            Collection of tags to assign to queue when created.
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Configuration.ITopicConfigurator">
+            <summary>
+            Configures an exchange for AmazonSQS
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.ITopicConfigurator.Durable">
+            <summary>
+            Specify the queue should be durable (survives broker restart) or in-memory
+            </summary>
+            <value>True for a durable queue, False for an in-memory queue</value>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.ITopicConfigurator.AutoDelete">
+            <summary>
+            Specify that the queue (and the exchange of the same name) should be created as auto-delete
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.ITopicConfigurator.TopicAttributes">
+            <summary>
+            Additional <see href="https://docs.aws.amazon.com/sns/latest/api/API_SetTopicAttributes.html">attributes</see> for the topic.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.ITopicConfigurator.TopicSubscriptionAttributes">
+            <summary>
+            Additional <see href="https://docs.aws.amazon.com/sns/latest/api/API_SetSubscriptionAttributes.html">attributes</see> for the topic's subscription.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Configuration.ITopicConfigurator.TopicTags">
+            <summary>
+            Collection of tags to assign to topic when created.
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Configuration.ITopicSubscriptionConfigurator">
+            <summary>
+            Used to configure the binding of an exchange (to either a queue or another exchange)
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.ConnectionContext.Connection">
+            <summary>
+            The Amazon Connection
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.ConnectionContext.HostAddress">
+            <summary>
+            The Host Address for this connection
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Contexts.AmazonSqsClientContext.PollMessages(System.String,MassTransit.AmazonSqsTransport.Topology.ReceiveSettings)">
+            <summary>
+            SQS can only be polled for 10 messages at a time.
+            Make multiple poll requests, if necessary, to achieve up to PrefetchCount number of messages
+            </summary>
+            <param name="queueUrl">URL for queue to be polled</param>
+            <param name="receiveSettings"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Pipeline.AmazonSqsBasicConsumer">
+            <summary>
+            Receives messages from AmazonSQS, pushing them to the InboundPipe of the service endpoint.
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Pipeline.AmazonSqsBasicConsumer.#ctor(MassTransit.AmazonSqsTransport.ClientContext,System.Uri,MassTransit.AmazonSqsTransport.Contexts.SqsReceiveEndpointContext)">
+            <summary>
+            The basic consumer receives messages pushed from the broker.
+            </summary>
+            <param name="client">The model context for the consumer</param>
+            <param name="inputAddress">The input address for messages received by the consumer</param>
+            <param name="context">The topology</param>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Pipeline.AmazonSqsConsumerFilter">
+            <summary>
+            A filter that uses the model context to create a basic consumer and connect it to the model
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Pipeline.ConfigureTopologyFilter`1">
+            <summary>
+            Configures the broker with the supplied topology once the model is created, to ensure
+            that the exchanges, queues, and bindings for the model are properly configured in AmazonSQS.
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Pipeline.PurgeOnStartupFilter">
+            <summary>
+            Purges the queue on startup, only once per filter instance
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Pipeline.ReceiveClientFilter">
+            <summary>
+            Creates a receiving model context using the connection
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Scheduling.AmazonSqsScheduleMessagePipe`1">
+            <summary>
+            Sets the message enqueue time when sending the message, and invokes
+            any developer-specified pipes.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Topology.Builders.IPublishEndpointBrokerTopologyBuilder">
+            <summary>
+            A builder for creating the topology when publishing a message
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Builders.IPublishEndpointBrokerTopologyBuilder.Topic">
+            <summary>
+            The exchange to which the message is published
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Topology.Builders.IReceiveEndpointBrokerTopologyBuilder">
+            <summary>
+            A unique builder context should be created for each specification, so that the items added
+            by it can be combined together into a group - so that if a subsequent specification yanks
+            something that conflicts, the system can yank the group or warn that it's impacted.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Builders.IReceiveEndpointBrokerTopologyBuilder.Queue">
+            <summary>
+            A handle to the consuming queue
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Topology.Builders.ISendEndpointBrokerTopologyBuilder">
+            <summary>
+            A builder for creating the topology when publishing a message
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Builders.ISendEndpointBrokerTopologyBuilder.Queue">
+            <summary>
+            The exchange to which the message is published
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Builders.PublishEndpointBrokerTopologyBuilder.Topic">
+            <summary>
+            The exchange to which the published message is sent
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Builders.SendEndpointBrokerTopologyBuilder.Queue">
+            <summary>
+            The queue to which messages are sent
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.Configuration.IAmazonSqsMessageConsumeTopologyConfigurator`1.Subscribe(System.Action{MassTransit.AmazonSqsTransport.Configuration.ITopicSubscriptionConfigurator})">
+            <summary>
+            Adds the exchange bindings for this message type
+            </summary>
+            <param name="configure">Configure the binding and the exchange</param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.Configuration.IAmazonSqsMessageConsumeTopologyConfigurator.Apply(MassTransit.AmazonSqsTransport.Topology.Builders.IReceiveEndpointBrokerTopologyBuilder)">
+            <summary>
+            Apply the message topology to the builder
+            </summary>
+            <param name="builder"></param>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Topology.Configuration.Specifications.ConsumerConsumeTopologySpecification">
+            <summary>
+            Used to by a TopicSubscription destination to the receive endpoint, via an additional message consumer
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.DeadLetterSettings.GetBrokerTopology">
+            <summary>
+            Return the BrokerTopology to apply at startup (to create exchange and queue if binding is specified)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Topology.Entities.Queue">
+            <summary>
+            The queue details used to declare the queue to AmazonSQS
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Queue.EntityName">
+            <summary>
+            The queue name
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Queue.Durable">
+            <summary>
+            True if the queue should be durable, and survive a broker restart
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Queue.AutoDelete">
+            <summary>
+            True if the queue should be deleted when the connection is closed
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Queue.QueueAttributes">
+            <summary>
+            Additional <see href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html">attributes</see> for the queue.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Queue.QueueSubscriptionAttributes">
+            <summary>
+            Additional <see href="https://docs.aws.amazon.com/sns/latest/api/API_SetSubscriptionAttributes.html">attributes</see> for the queue's subscription.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Queue.QueueTags">
+            <summary>
+            Collection of tags to assign to queue when created.
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Topology.Entities.QueueSubscription">
+            <summary>
+            The topic to queue binding details to declare the binding to AmazonSQS
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.QueueSubscription.Source">
+            <summary>
+            The topic
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.QueueSubscription.Destination">
+            <summary>
+            The queue
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Topology.Entities.Topic">
+            <summary>
+            The exchange details used to declare the exchange to AmazonSQS
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Topic.EntityName">
+            <summary>
+            The exchange name
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Topic.Durable">
+            <summary>
+            True if the exchange should be durable, and survive a broker restart
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Topic.AutoDelete">
+            <summary>
+            True if the exchange should be deleted when the connection is closed
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Topic.TopicAttributes">
+            <summary>
+            Additional <see href="https://docs.aws.amazon.com/sns/latest/api/API_SetTopicAttributes.html">attributes</see> for the topic.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Topic.TopicSubscriptionAttributes">
+            <summary>
+            Additional <see href="https://docs.aws.amazon.com/sns/latest/api/API_SetSubscriptionAttributes.html">attributes</see> for the topic's subscription.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.Topic.TopicTags">
+            <summary>
+            Collection of tags to assign to topic when created.
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Topology.Entities.TopicSubscription">
+            <summary>
+            The topic to queue binding details to declare the binding to AmazonSQS
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.TopicSubscription.Source">
+            <summary>
+            The topic
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.Entities.TopicSubscription.Destination">
+            <summary>
+            The queue
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.EntitySettings.EntityName">
+            <summary>
+            The entity name (either a topic or a queue)
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.EntitySettings.Durable">
+            <summary>
+            True if messages should be persisted to disk for the queue
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.EntitySettings.AutoDelete">
+            <summary>
+            True if the queue/exchange should automatically be deleted
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.EntitySettings.Tags">
+            <summary>
+            Collection of tags to assign to queue when created.
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.ErrorSettings.GetBrokerTopology">
+            <summary>
+            Return the BrokerTopology to apply at startup (to create exchange and queue if binding is specified)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IAmazonSqsConsumeTopology.Apply(MassTransit.AmazonSqsTransport.Topology.Builders.IReceiveEndpointBrokerTopologyBuilder)">
+            <summary>
+            Apply the entire topology to the builder
+            </summary>
+            <param name="builder"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IAmazonSqsConsumeTopology.Bind(System.String,System.Action{MassTransit.AmazonSqsTransport.Configuration.ITopicSubscriptionConfigurator})">
+            <summary>
+            Bind an exchange, using the configurator
+            </summary>
+            <param name="topicName"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IAmazonSqsHostTopology.GetDestinationAddress(System.String,System.Action{MassTransit.AmazonSqsTransport.Configuration.ITopicConfigurator})">
+            <summary>
+            Returns the destination address for the specified exchange
+            </summary>
+            <param name="topicName"></param>
+            <param name="configure">Callback to configure exchange settings</param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IAmazonSqsHostTopology.GetDestinationAddress(System.Type,System.Action{MassTransit.AmazonSqsTransport.Configuration.ITopicConfigurator})">
+            <summary>
+            Returns the destination address for the specified message type
+            </summary>
+            <param name="messageType">The message type</param>
+            <param name="configure">Callback to configure exchange settings</param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IAmazonSqsHostTopology.GetSendSettings(System.Uri)">
+            <summary>
+            Returns the settings for sending to the specified address. Will parse any arguments
+            off the query string to properly configure the settings, including exchange and queue
+            durability, etc.
+            </summary>
+            <param name="address">The AmazonSQS endpoint address</param>
+            <returns>The send settings for the address</returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IAmazonSqsMessagePublishTopology`1.GetPublishSettings(System.Uri)">
+            <summary>
+            Returns the send settings for a publish endpoint, which are mostly unused now with topology
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IAmazonSqsMessagePublishTopology.Apply(MassTransit.AmazonSqsTransport.Topology.Builders.IPublishEndpointBrokerTopologyBuilder)">
+            <summary>
+            Apply the message topology to the builder, including any implemented types
+            </summary>
+            <param name="builder">The topology builder</param>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IAmazonSqsSendTopology.GetErrorSettings(MassTransit.AmazonSqsTransport.Topology.EntitySettings)">
+            <summary>
+            Return the error settings for the queue
+            </summary>
+            <param name="settings"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IAmazonSqsSendTopology.GetDeadLetterSettings(MassTransit.AmazonSqsTransport.Topology.EntitySettings)">
+            <summary>
+            Return the dead letter settings for the queue
+            </summary>
+            <param name="settings"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IBrokerTopologyBuilder.CreateTopic(System.String,System.Boolean,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object},System.Collections.Generic.IDictionary{System.String,System.Object},System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Declares an exchange
+            </summary>
+            <param name="name">The topic name</param>
+            <param name="durable">A durable topic survives a broker restart</param>
+            <param name="autoDelete">Automatically delete if the broker connection is closed</param>
+            <param name="topicAttributes"></param>
+            <param name="topicSubscriptionAttributes"></param>
+            <param name="tags"></param>
+            <returns>An entity handle used to reference the topic in subsequent calls</returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IBrokerTopologyBuilder.CreateQueue(System.String,System.Boolean,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object},System.Collections.Generic.IDictionary{System.String,System.Object},System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Declares a queue
+            </summary>
+            <param name="name"></param>
+            <param name="durable"></param>
+            <param name="autoDelete"></param>
+            <param name="queueAttributes"></param>
+            <param name="queueSubscriptionAttributes"></param>
+            <param name="tags"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IBrokerTopologyBuilder.CreateQueueSubscription(MassTransit.AmazonSqsTransport.Topology.Entities.TopicHandle,MassTransit.AmazonSqsTransport.Topology.Entities.QueueHandle)">
+            <summary>
+            Create a subscription on a topic to a queue
+            </summary>
+            <param name="topic"></param>
+            <param name="queue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.IBrokerTopologyBuilder.CreateTopicSubscription(MassTransit.AmazonSqsTransport.Topology.Entities.TopicHandle,MassTransit.AmazonSqsTransport.Topology.Entities.TopicHandle)">
+            <summary>
+            Create a subscription on a topic to another topic
+            </summary>
+            <param name="source"></param>
+            <param name="destination"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.PublishSettings.GetSendAddress(System.Uri)">
+            <summary>
+            Returns the send address for the settings
+            </summary>
+            <param name="hostAddress"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.PublishSettings.GetBrokerTopology">
+            <summary>
+            Return the BrokerTopology to apply at startup (to create exchange and queue if binding is specified)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Topology.ReceiveSettings">
+            <summary>
+            Specify the receive settings for a receive transport
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.ReceiveSettings.PrefetchCount">
+            <summary>
+            The number of unacknowledged messages to allow to be processed concurrently
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.ReceiveSettings.PurgeOnStartup">
+            <summary>
+            If True, and a queue name is specified, if the queue exists and has messages, they are purged at startup
+            If the connection is reset, messages are not purged until the service is reset
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.ReceiveSettings.QueueAttributes">
+            <summary>
+            Additional <see href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html">attributes</see> for the queue.
+            </summary>
+        </member>
+        <member name="P:MassTransit.AmazonSqsTransport.Topology.ReceiveSettings.QueueSubscriptionAttributes">
+            <summary>
+            Additional <see href="https://docs.aws.amazon.com/sns/latest/api/API_SetSubscriptionAttributes.html">attributes</see> for the queue's subscription.
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.ReceiveSettings.GetInputAddress(System.Uri)">
+            <summary>
+            Get the input address for the transport on the specified host
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.SendSettings.GetSendAddress(System.Uri)">
+            <summary>
+            Returns the send address for the settings
+            </summary>
+            <param name="hostAddress"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Topology.SendSettings.GetBrokerTopology">
+            <summary>
+            Return the BrokerTopology to apply at startup (to create exchange and queue if binding is specified)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Transport.IClientContextSupervisor">
+            <summary>
+            Creates and caches a model on the connection
+            </summary>
+        </member>
+        <member name="T:MassTransit.AmazonSqsTransport.Transport.IConnectionContextSupervisor">
+            <summary>
+            Attaches a connection context to the value (shared, of course)
+            </summary>
+        </member>
+        <member name="M:MassTransit.AmazonSqsTransport.Transport.SqsReceiveTransport.Start">
+            <summary>
+            Start the receive transport, returning a Task that can be awaited to signal the transport has
+            completely shutdown once the cancellation token is cancelled.
+            </summary>
+            <returns>A task that is completed once the transport is shut down</returns>
+        </member>
+    </members>
+</doc>

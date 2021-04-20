@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureRepositoryPlugin", "Az
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{A3762F61-FD14-4650-B2E8-5F3E18EF9240}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureRepository", "AzureRepository\AzureRepository.csproj", "{FA269B8C-C631-4FFB-8187-B524658119BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A3762F61-FD14-4650-B2E8-5F3E18EF9240}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3762F61-FD14-4650-B2E8-5F3E18EF9240}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3762F61-FD14-4650-B2E8-5F3E18EF9240}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA269B8C-C631-4FFB-8187-B524658119BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA269B8C-C631-4FFB-8187-B524658119BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA269B8C-C631-4FFB-8187-B524658119BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA269B8C-C631-4FFB-8187-B524658119BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
