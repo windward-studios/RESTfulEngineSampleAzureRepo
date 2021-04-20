@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using AzureRepositoryPlugin.AzureStorage;
 using Microsoft.Azure.Cosmos.Table;
-using Microsoft.Extensions.Configuration;
 using RESTfulEngine.DocumentRepository;
 using AzureStorage.Blobs;
 using AzureStorage.Tables;
@@ -26,10 +25,10 @@ namespace AzureRepositoryPlugin
         private readonly string _storageConnectionString;
 
         protected const string JOB_INFO_TABLE_NAME = "RestJobInfoTable";
-        private const string JOB_BLOB_NAME = "jobBlobs";
+        private const string JOB_BLOB_NAME = "restjobblobs";
 
-        private const string TEMPLATE_CONTAINER = "Templates";
-        private const string DOCUMENT_CONTAINER = "GeneratedDocuments";
+        private const string TEMPLATE_CONTAINER = "templates";
+        private const string DOCUMENT_CONTAINER = "generateddocuments";
 
         protected ICloudTableWrapper<JobInfoEntity> _jobInfoTable;
 
@@ -69,7 +68,15 @@ namespace AzureRepositoryPlugin
 
             string templateData = JsonConvert.SerializeObject(request.Template);
             string templateBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(templateData));
-            var response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, entity.JobId.ToString(), templateBase64);
+
+            Response<BlobContentInfo> response = null;
+            try
+            {
+                response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, entity.JobId.ToString(), templateBase64);
+            } catch(Exception e)
+            {
+                Log.Error($"Exception {e}");
+            }
 
             success &= response.GetRawResponse().Status == 201;
 

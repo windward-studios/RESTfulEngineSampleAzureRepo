@@ -9,7 +9,6 @@ using MassTransit.ActiveMqTransport;
 using MassTransit.AmazonSqsTransport.Configuration;
 using MassTransit.Azure.ServiceBus.Core;
 using MassTransit.Testing;
-using Microsoft.Extensions.Configuration;
 
 namespace AzureRepositoryPlugin.EventBus
 {

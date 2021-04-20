@@ -1,3 +1,4 @@
+D:\WindwardNEXT\AzureRepository\AzureRepository\obj\Debug\AzureRepository.csproj.CoreCompileInputs.cache
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Azure.Cosmos.ServiceInterop.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Cosmos.CRTCompat.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Azure.Documents.ServiceInterop.dll
@@ -127,7 +128,6 @@ D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Azure.Servic
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Bcl.HashCode.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Diagnostics.Tracing.EventSource.dll
-D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Extensions.Configuration.Abstractions.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Extensions.Primitives.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.IdentityModel.Clients.ActiveDirectory.dll
@@ -236,7 +236,6 @@ D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Azure.Servic
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Bcl.HashCode.xml
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Diagnostics.Tracing.EventSource.xml
-D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Extensions.Configuration.Abstractions.xml
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.Extensions.Primitives.xml
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\Microsoft.IdentityModel.Clients.ActiveDirectory.xml
@@ -310,7 +309,6 @@ D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\ko\System.Spatial.reso
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\ru\System.Spatial.resources.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\zh-Hans\System.Spatial.resources.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\zh-Hant\System.Spatial.resources.dll
-D:\WindwardNEXT\AzureRepository\AzureRepository\obj\Debug\AzureRepository.csproj.CoreCompileInputs.cache
 D:\WindwardNEXT\AzureRepository\AzureRepository\obj\Debug\AzureRepository.csproj.CopyComplete
 D:\WindwardNEXT\AzureRepository\AzureRepository\obj\Debug\AzureRepository.dll
 D:\WindwardNEXT\AzureRepository\AzureRepository\obj\Debug\AzureRepository.pdb

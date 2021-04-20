@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using MassTransit.ActiveMqTransport;
 using MassTransit.AmazonSqsTransport.Configuration;
 using MassTransit.Azure.ServiceBus.Core;
-using Microsoft.Extensions.Configuration;
 using AzureRepositoryPlugin;
 
 namespace AzureRepositoryPlugin.EventBus
