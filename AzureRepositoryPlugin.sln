@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureRepositoryPlugin", "AzureRepositoryPlugin\AzureRepositoryPlugin.csproj", "{0A95A289-59CC-4A75-9F0D-333E9CFB132E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{A3762F61-FD14-4650-B2E8-5F3E18EF9240}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureRepository", "AzureRepository\AzureRepository.csproj", "{FA269B8C-C631-4FFB-8187-B524658119BD}"
 EndProject
 Global
@@ -15,14 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0A95A289-59CC-4A75-9F0D-333E9CFB132E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A95A289-59CC-4A75-9F0D-333E9CFB132E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A95A289-59CC-4A75-9F0D-333E9CFB132E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A95A289-59CC-4A75-9F0D-333E9CFB132E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3762F61-FD14-4650-B2E8-5F3E18EF9240}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3762F61-FD14-4650-B2E8-5F3E18EF9240}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3762F61-FD14-4650-B2E8-5F3E18EF9240}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3762F61-FD14-4650-B2E8-5F3E18EF9240}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FA269B8C-C631-4FFB-8187-B524658119BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FA269B8C-C631-4FFB-8187-B524658119BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA269B8C-C631-4FFB-8187-B524658119BD}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -36,6 +36,7 @@ namespace AzureRepository
         private bool shutDown;
 
         private EventBusProducer _producer;
+        private EventBusConsumer _consumer;
 
         private StorageManager StorageManager;
 
@@ -61,13 +62,21 @@ namespace AzureRepository
             // Inititalize storage
             StorageManager = new StorageManager();
 
+            _consumer = new EventBusConsumer();
+            _consumer.Create(ep =>
+            {
+                EventConsumer.AddToEndpoint(ep);
+            });
+            _consumer.Start();
+
             // Initialize Service Bus components
             _producer = new EventBusProducer();
+            _producer.Start();
 
             AddConsumers();
 
             // Start the processor
-            _producer.Start();
+            //_producer.Start();
         }
 
         private void AddConsumers()
@@ -92,6 +101,14 @@ namespace AzureRepository
 
         public string CreateRequest(Template template, RepositoryStatus.REQUEST_TYPE requestType)
         {
+            var task = Task.Run(async () => await CreateRequestAsync(template, requestType));
+            task.Wait();
+            string guid = task.Result;
+            return guid;
+        }
+
+        public async Task<string> CreateRequestAsync(Template template, RepositoryStatus.REQUEST_TYPE requestType)
+        {
             template.Guid = Guid.NewGuid().ToString();
 
             JobRequestData data = new JobRequestData
@@ -102,7 +119,7 @@ namespace AzureRepository
                 CreationDate = DateTime.UtcNow
             };
 
-            _producer.Publish(data);
+            await _producer.Publish(data);
 
             Log.Debug($"Created Request of type {requestType} for template {template.Guid}. Request added to queue.");
 
@@ -121,6 +138,9 @@ namespace AzureRepository
         {
             AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
             JobRequestData job = await storage.GetOldestPendingJobAndGenerate();
+
+            if (job == null)
+                return null;
 
             return new RepositoryRequest(job.Template, job.RequestType);
         }

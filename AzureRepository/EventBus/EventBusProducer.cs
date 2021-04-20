@@ -51,7 +51,7 @@ namespace AzureRepositoryPlugin.EventBus
             }
         }
 
-        public async void Publish(JobRequestData evt)
+        public async Task Publish(JobRequestData evt)
         {
             await BusControl.Publish(evt);
         }

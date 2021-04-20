@@ -25,7 +25,7 @@ namespace AzureRepositoryPlugin
 
         private readonly string _storageConnectionString;
 
-        protected const string JOB_INFO_TABLE_NAME = "JobInfoTable";
+        protected const string JOB_INFO_TABLE_NAME = "RestJobInfoTable";
         private const string JOB_BLOB_NAME = "jobBlobs";
 
         private const string TEMPLATE_CONTAINER = "Templates";
