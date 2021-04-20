@@ -12,3 +12,13 @@ C:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\obj\Debug\netstandard2.0\A
 C:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\bin\Debug\netstandard2.0\AzureRepositoryPlugin.pdb
 C:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\obj\Debug\netstandard2.0\AzureRepositoryPlugin.dll
 C:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\obj\Debug\netstandard2.0\AzureRepositoryPlugin.pdb
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\bin\Debug\netstandard2.0\Microsoft.Azure.Cosmos.ServiceInterop.dll
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\bin\Debug\netstandard2.0\Cosmos.CRTCompat.dll
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\bin\Debug\netstandard2.0\AzureRepositoryPlugin.deps.json
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\bin\Debug\netstandard2.0\AzureRepositoryPlugin.dll
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\bin\Debug\netstandard2.0\AzureRepositoryPlugin.pdb
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\obj\Debug\netstandard2.0\AzureRepositoryPlugin.AssemblyInfoInputs.cache
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\obj\Debug\netstandard2.0\AzureRepositoryPlugin.AssemblyInfo.cs
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\obj\Debug\netstandard2.0\AzureRepositoryPlugin.csproj.CoreCompileInputs.cache
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\obj\Debug\netstandard2.0\AzureRepositoryPlugin.dll
+D:\WindwardNEXT\AzureRepository\AzureRepositoryPlugin\obj\Debug\netstandard2.0\AzureRepositoryPlugin.pdb

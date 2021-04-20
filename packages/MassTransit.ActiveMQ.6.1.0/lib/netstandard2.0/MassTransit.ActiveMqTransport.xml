@@ -1,0 +1,719 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MassTransit.ActiveMqTransport</name>
+    </assembly>
+    <members>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqBusFactory.Create(System.Action{MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator})">
+            <summary>
+            Configure and create a bus for ActiveMQ
+            </summary>
+            <param name="configure">The configuration callback to configure the bus</param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqDeferMessageExtensions.Defer``1(MassTransit.ConsumeContext{``0},System.TimeSpan,System.Action{MassTransit.ConsumeContext,MassTransit.SendContext})">
+            <summary>
+            Defers the message for redelivery using a delayed exchange.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="context"></param>
+            <param name="delay"></param>
+            <param name="callback"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqEndpointDefinitionExtensions.Apply(MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator,MassTransit.IEndpointDefinition,System.Action{MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator})">
+            <summary>
+            We may want to have a builder/endpoint context that could store things like management endpoint, etc. to configure
+            filters and add configuration interfaces for things like concurrency limit and prefetch count
+            </summary>
+            <param name="configurator"></param>
+            <param name="definition"></param>
+            <param name="configure">The callback to invoke after the definition configuration has been applied</param>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.ActiveMqHostSettings">
+            <summary>
+            Settings to configure a ActiveMQ host explicitly without requiring the fluent interface
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ActiveMqHostSettings.Host">
+            <summary>
+                The ActiveMQ host to connect to (should be a valid hostname)
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ActiveMqHostSettings.Port">
+            <summary>
+                The ActiveMQ port to connect
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ActiveMqHostSettings.Username">
+            <summary>
+                The Username for connecting to the host
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ActiveMqHostSettings.Password">
+            <summary>
+                The password for connection to the host
+                MAYBE this should be a SecureString instead of a regular string
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ActiveMqHostSettings.HostAddress">
+            <summary>
+            Returns the host address
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqHostConfigurationExtensions.Host(MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator,System.Uri,System.Action{MassTransit.ActiveMqTransport.IActiveMqHostConfigurator})">
+            <summary>
+                Configure a ActiveMQ host using the configuration API
+            </summary>
+            <param name="configurator"></param>
+            <param name="hostAddress">The URI host address of the ActiveMQ host (activemq://host:port/vhost)</param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqHostConfigurationExtensions.Host(MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator,System.String,System.Action{MassTransit.ActiveMqTransport.IActiveMqHostConfigurator})">
+            <summary>
+            Configure a ActiveMQ host with a host name and virtual host
+            </summary>
+            <param name="configurator"></param>
+            <param name="hostName">The host name of the broker</param>
+            <param name="configure">The configuration callback</param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqHostConfigurationExtensions.Host(MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator,System.String,System.Int32,System.Action{MassTransit.ActiveMqTransport.IActiveMqHostConfigurator})">
+            <summary>
+            Configure a ActiveMQ host with a host name and virtual host
+            </summary>
+            <param name="configurator"></param>
+            <param name="hostName">The host name of the broker</param>
+            <param name="port">The port to connect to the broker</param>
+            <param name="configure">The configuration callback</param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqHostConfigurationExtensions.ReceiveEndpoint(MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator,MassTransit.ActiveMqTransport.IActiveMqHost,System.Action{MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator})">
+            <summary>
+            Declare a ReceiveEndpoint using a unique generated queue name. This queue defaults to auto-delete
+            and non-durable. By default all services bus instances include a default receiveEndpoint that is
+            of this type (created automatically upon the first receiver binding).
+            </summary>
+            <param name="configurator"></param>
+            <param name="host"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqHostConfigurationExtensions.ReceiveEndpoint(MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator,MassTransit.ActiveMqTransport.IActiveMqHost,MassTransit.IEndpointDefinition,System.Action{MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator})">
+            <summary>
+            Declare a ReceiveEndpoint using a unique generated queue name. This queue defaults to auto-delete
+            and non-durable. By default all services bus instances include a default receiveEndpoint that is
+            of this type (created automatically upon the first receiver binding).
+            </summary>
+            <param name="configurator"></param>
+            <param name="host"></param>
+            <param name="definition"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqHostConfigurationExtensions.ReceiveEndpoint(MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator,System.Action{MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator})">
+            <summary>
+            Declare a ReceiveEndpoint using a unique generated queue name. This queue defaults to auto-delete
+            and non-durable. By default all services bus instances include a default receiveEndpoint that is
+            of this type (created automatically upon the first receiver binding).
+            </summary>
+            <param name="configurator"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqHostConfigurationExtensions.ReceiveEndpoint(MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator,MassTransit.IEndpointDefinition,System.Action{MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator})">
+            <summary>
+            Declare a ReceiveEndpoint using a unique generated queue name. This queue defaults to auto-delete
+            and non-durable. By default all services bus instances include a default receiveEndpoint that is
+            of this type (created automatically upon the first receiver binding).
+            </summary>
+            <param name="configurator"></param>
+            <param name="definition"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ActiveMqSchedulerExtensions.UseActiveMqMessageScheduler(MassTransit.IBusFactoryConfigurator)">
+            <summary>
+            Uses the ActiveMQ schedule messages for future delivery. A lightweight
+            alternative to Quartz, which does not require any storage outside of ActiveMQ.
+            </summary>
+            <param name="configurator"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.BusFactoryConfiguratorExtensions.CreateUsingActiveMq(MassTransit.IBusFactorySelector,System.Action{MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator})">
+            <summary>
+            Select ActiveMQ as the transport for the service bus
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Configuration.IActiveMqBusConfiguration.CreateEndpointConfiguration">
+            <summary>
+            Create an endpoint configuration on the bus, which can later be turned into a receive endpoint
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Configuration.IActiveMqHostConfiguration.DeployTopologyOnly">
+            <summary>
+            If true, only the broker topology will be deployed
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Configuration.IActiveMqHostConfiguration.CreateReceiveEndpointConfiguration(System.String,System.Action{MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator})">
+            <summary>
+            Create a receive endpoint configuration for the default host
+            </summary>
+            <param name="queueName"></param>
+            <param name="configure"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Configuration.IActiveMqHostConfiguration.CreateReceiveEndpointConfiguration(MassTransit.ActiveMqTransport.Topology.Settings.QueueReceiveSettings,MassTransit.ActiveMqTransport.Configuration.IActiveMqEndpointConfiguration,System.Action{MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator})">
+            <summary>
+            Create a receive endpoint configuration for the default host
+            </summary>
+            <param name="settings"></param>
+            <param name="endpointConfiguration"></param>
+            <param name="configure"></param>
+            <returns></returns>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator.DeployTopologyOnly">
+            <summary>
+            Set to true if the topology should be deployed only
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator.Send``1(System.Action{MassTransit.ActiveMqTransport.Topology.IActiveMqMessageSendTopologyConfigurator{``0}})">
+            <summary>
+            Configure the send topology of the message type
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="configureTopology"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator.Publish``1(System.Action{MassTransit.ActiveMqTransport.Topology.IActiveMqMessagePublishTopologyConfigurator{``0}})">
+            <summary>
+            Configure the send topology of the message type
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="configureTopology"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator.Host(MassTransit.ActiveMqTransport.ActiveMqHostSettings)">
+            <summary>
+            Configure a Host that can be connected. If only one host is specified, it is used as the default
+            host for receive endpoints.
+            </summary>
+            <param name="settings"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.IActiveMqHostConfigurator.Username(System.String)">
+            <summary>
+            Sets the username for the connection to ActiveMQ
+            </summary>
+            <param name="username"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.IActiveMqHostConfigurator.Password(System.String)">
+            <summary>
+            Sets the password for the connection to ActiveMQ
+            </summary>
+            <param name="password"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.IActiveMqHostConfigurator.FailoverHosts(System.String[])">
+            <summary>
+            Sets a list of hosts to enable the failover transport
+            </summary>
+            <param name="hosts"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.IActiveMqHostConfigurator.TransportOptions(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Sets options on the underlying NMS transport
+            </summary>
+            <param name="options"></param>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator">
+            <summary>
+            Configure a receiving ActiveMQ endpoint
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator.BindMessageTopics">
+            <summary>
+            If true, creates message consumers for the message types in consumers, handlers, etc.
+            With ActiveMQ, these are virtual consumers tied to the virtual topics
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator.Bind``1(System.Action{MassTransit.ActiveMqTransport.ITopicBindingConfigurator})">
+            <summary>
+            Bind an existing exchange for the message type to the receive endpoint by name
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator.Bind(System.String,System.Action{MassTransit.ActiveMqTransport.ITopicBindingConfigurator})">
+            <summary>
+            Bind an exchange to the receive endpoint exchange
+            </summary>
+            <param name="topicName">The exchange name</param>
+            <param name="callback">Configure the exchange and binding</param>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.IQueueBindingConfigurator.Selector">
+            <summary>
+            A routing key for the exchange binding
+            </summary>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.IQueueConfigurator">
+            <summary>
+            Configures a queue/exchange pair in ActiveMQ
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.IQueueConfigurator.Durable">
+            <summary>
+            Specify the queue should be durable (survives broker restart) or in-memory
+            </summary>
+            <value>True for a durable queue, False for an in-memory queue</value>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.IQueueConfigurator.AutoDelete">
+            <summary>
+            Specify that the queue (and the exchange of the same name) should be created as auto-delete
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.IQueueConfigurator.Lazy">
+            <summary>
+            Sets the queue to be lazy (using less memory)
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.IQueueEndpointConfigurator.PrefetchCount">
+            <summary>
+            Specify the maximum number of concurrent messages that are consumed
+            </summary>
+            <value>The limit</value>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.ITopicBindingConfigurator">
+            <summary>
+            Used to configure the binding of an exchange (to either a queue or another exchange)
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ITopicBindingConfigurator.Selector">
+            <summary>
+            A routing key for the exchange binding
+            </summary>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.ITopicConfigurator">
+            <summary>
+            Configures an exchange for ActiveMQ
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ITopicConfigurator.Durable">
+            <summary>
+            Specify the queue should be durable (survives broker restart) or in-memory
+            </summary>
+            <value>True for a durable queue, False for an in-memory queue</value>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ITopicConfigurator.AutoDelete">
+            <summary>
+            Specify that the queue (and the exchange of the same name) should be created as auto-delete
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ConnectionContext.Connection">
+            <summary>
+            The ActiveMQ Connection
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ConnectionContext.Description">
+            <summary>
+            The connection description, useful to debug output
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.ConnectionContext.HostAddress">
+            <summary>
+            The Host Address for this connection
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.ConnectionContext.CreateSession(System.Threading.CancellationToken)">
+            <summary>
+            Create a model on the connection
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Contexts.ActiveMqMessageRedeliveryContext`1">
+            <summary>
+            Context for delaying message redelivery using a delayed ActiveMQ messages.
+            http://activemq.apache.org/delay-and-schedule-message-delivery
+            </summary>
+            <typeparam name="TMessage"></typeparam>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.DelayedRedeliveryExtensions.UseDelayedRedelivery``1(GreenPipes.IPipeConfigurator{MassTransit.ConsumeContext{``0}},System.Action{GreenPipes.Configurators.IRetryConfigurator})">
+            <summary>
+            Use the message scheduler to schedule redelivery of a specific message type based upon the retry policy, via
+            the delayed exchange feature of ActiveMQ.
+            </summary>
+            <param name="configurator"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.DelayedRedeliveryExtensions.UseDelayedRedelivery(MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator,System.Action{GreenPipes.Configurators.IRetryConfigurator})">
+            <summary>
+            For all configured messages type (handlers, consumers, and sagas), configures delayed redelivery using the retry configuration specified.
+            Redelivery is configured once for each message type, and is added prior to the consumer factory or saga repository in the pipeline.
+            </summary>
+            <param name="configurator"></param>
+            <param name="configureRetry"></param>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Pipeline.ActiveMqBasicConsumer">
+            <summary>
+            Receives messages from ActiveMQ, pushing them to the InboundPipe of the service endpoint.
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Pipeline.ActiveMqBasicConsumer.#ctor(MassTransit.ActiveMqTransport.SessionContext,Apache.NMS.IMessageConsumer,System.Uri,MassTransit.ActiveMqTransport.Contexts.ActiveMqReceiveEndpointContext)">
+            <summary>
+            The basic consumer receives messages pushed from the broker.
+            </summary>
+            <param name="session">The model context for the consumer</param>
+            <param name="messageConsumer"></param>
+            <param name="inputAddress">The input address for messages received by the consumer</param>
+            <param name="context">The topology</param>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Pipeline.ActiveMqConsumerFilter">
+            <summary>
+            A filter that uses the model context to create a basic consumer and connect it to the model
+            </summary>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Pipeline.ActiveMqMessageRedeliveryFilter`1">
+            <summary>
+            Uses a delayed exchange in ActiveMQ to delay a message retry
+            </summary>
+            <typeparam name="TMessage"></typeparam>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Pipeline.ConfigureTopologyFilter`1">
+            <summary>
+            Configures the broker with the supplied topology once the model is created, to ensure
+            that the exchanges, queues, and bindings for the model are properly configured in ActiveMQ.
+            </summary>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Pipeline.ReceiveSessionFilter">
+            <summary>
+            Creates a receiving model context using the connection
+            </summary>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Scheduling.ActiveMqScheduleMessagePipe`1">
+            <summary>
+            Sets the message enqueue time when sending the message, and invokes
+            any developer-specified pipes.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Topology.Builders.IPublishEndpointBrokerTopologyBuilder">
+            <summary>
+            A builder for creating the topology when publishing a message
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Builders.IPublishEndpointBrokerTopologyBuilder.Topic">
+            <summary>
+            The exchange to which the message is published
+            </summary>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Topology.Builders.IReceiveEndpointBrokerTopologyBuilder">
+            <summary>
+            A unique builder context should be created for each specification, so that the items added
+            by it can be combined together into a group - so that if a subsequent specification yanks 
+            something that conflicts, the system can yank the group or warn that it's impacted.
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Builders.IReceiveEndpointBrokerTopologyBuilder.Queue">
+            <summary>
+            A handle to the consuming queue
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Builders.PublishEndpointBrokerTopologyBuilder.Topic">
+            <summary>
+            The exchange to which the published message is sent
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqMessageConsumeTopologyConfigurator`1.Bind(System.Action{MassTransit.ActiveMqTransport.ITopicBindingConfigurator})">
+            <summary>
+            Adds the exchange bindings for this message type
+            </summary>
+            <param name="configure">Configure the binding and the exchange</param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqMessageConsumeTopologyConfigurator.Apply(MassTransit.ActiveMqTransport.Topology.Builders.IReceiveEndpointBrokerTopologyBuilder)">
+            <summary>
+            Apply the message topology to the builder
+            </summary>
+            <param name="builder"></param>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Topology.Specifications.ConsumerConsumeTopologySpecification">
+            <summary>
+            Used to by a Consumer virtual destination to the receive endpoint, via an additional message consumer
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.DeadLetterSettings.GetBrokerTopology">
+            <summary>
+            Return the BrokerTopology to apply at startup (to create exchange and queue if binding is specified)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Topology.Entities.Consumer">
+            <summary>
+            The exchange to queue binding details to declare the binding to ActiveMQ
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Consumer.Source">
+            <summary>
+            The virtual topic
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Consumer.Destination">
+            <summary>
+            The virtual topic consumer
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Consumer.Selector">
+            <summary>
+            A routing key for the exchange binding
+            </summary>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Topology.Entities.Queue">
+            <summary>
+            The queue details used to declare the queue to ActiveMQ
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Queue.EntityName">
+            <summary>
+            The queue name
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Queue.Durable">
+            <summary>
+            True if the queue should be durable, and survive a broker restart
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Queue.AutoDelete">
+            <summary>
+            True if the queue should be deleted when the connection is closed
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Queue.Lazy">
+            <summary>
+            True if the queue should limit broker memory usage
+            </summary>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Topology.Entities.Topic">
+            <summary>
+            The exchange details used to declare the exchange to ActiveMQ
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Topic.EntityName">
+            <summary>
+            The exchange name
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Topic.Durable">
+            <summary>
+            True if the exchange should be durable, and survive a broker restart
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.Entities.Topic.AutoDelete">
+            <summary>
+            True if the exchange should be deleted when the connection is closed
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.EntitySettings.EntityName">
+            <summary>
+            The entity name (either a topic or a queue)
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.EntitySettings.Durable">
+            <summary>
+            True if messages should be persisted to disk for the queue
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.EntitySettings.AutoDelete">
+            <summary>
+            True if the queue/exchange should automatically be deleted
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.ErrorSettings.GetBrokerTopology">
+            <summary>
+            Return the BrokerTopology to apply at startup (to create exchange and queue if binding is specified)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqConsumeTopology.Apply(MassTransit.ActiveMqTransport.Topology.Builders.IReceiveEndpointBrokerTopologyBuilder)">
+            <summary>
+            Apply the entire topology to the builder
+            </summary>
+            <param name="builder"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqConsumeTopology.Bind(System.String,System.Action{MassTransit.ActiveMqTransport.ITopicBindingConfigurator})">
+            <summary>
+            Bind an exchange, using the configurator
+            </summary>
+            <param name="topicName"></param>
+            <param name="configure"></param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqHostTopology.GetDestinationAddress(System.String,System.Action{MassTransit.ActiveMqTransport.ITopicConfigurator})">
+            <summary>
+            Returns the destination address for the specified exchange
+            </summary>
+            <param name="topicName"></param>
+            <param name="configure">Callback to configure exchange settings</param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqHostTopology.GetDestinationAddress(System.Type,System.Action{MassTransit.ActiveMqTransport.ITopicConfigurator})">
+            <summary>
+            Returns the destination address for the specified message type
+            </summary>
+            <param name="messageType">The message type</param>
+            <param name="configure">Callback to configure exchange settings</param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqHostTopology.GetSendSettings(System.Uri)">
+            <summary>
+            Returns the settings for sending to the specified address. Will parse any arguments
+            off the query string to properly configure the settings, including exchange and queue
+            durability, etc.
+            </summary>
+            <param name="address">The ActiveMQ endpoint address</param>
+            <returns>The send settings for the address</returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqMessagePublishTopology`1.GetSendSettings(System.Uri)">
+            <summary>
+            Returns the send settings for a publish endpoint, which are mostly unused now with topology
+            </summary>
+            <param name="hostAddress"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqMessagePublishTopology.Apply(MassTransit.ActiveMqTransport.Topology.Builders.IPublishEndpointBrokerTopologyBuilder)">
+            <summary>
+            Apply the message topology to the builder, including any implemented types
+            </summary>
+            <param name="builder">The topology builder</param>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqSendTopology.GetErrorSettings(MassTransit.ActiveMqTransport.Topology.EntitySettings)">
+            <summary>
+            Return the error settings for the queue
+            </summary>
+            <param name="settings"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IActiveMqSendTopology.GetDeadLetterSettings(MassTransit.ActiveMqTransport.Topology.EntitySettings)">
+            <summary>
+            Return the dead letter settings for the queue
+            </summary>
+            <param name="settings"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IBrokerTopologyBuilder.CreateTopic(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Declares an exchange
+            </summary>
+            <param name="name">The exchange name</param>
+            <param name="durable">A durable exchange survives a broker restart</param>
+            <param name="autoDelete">Automatically delete if the broker connection is closed</param>
+            <returns>An entity handle used to reference the exchange in subsequent calls</returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IBrokerTopologyBuilder.CreateQueue(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Declares a queue
+            </summary>
+            <param name="name"></param>
+            <param name="durable"></param>
+            <param name="autoDelete"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IBrokerTopologyBuilder.BindConsumer(MassTransit.ActiveMqTransport.Topology.Entities.TopicHandle,MassTransit.ActiveMqTransport.Topology.Entities.QueueHandle,System.String)">
+            <summary>
+            Binds an exchange to a queue, with the specified routing key and arguments
+            </summary>
+            <param name="topic"></param>
+            <param name="queue"></param>
+            <param name="selector"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Topology.IExchangeTypeSelector">
+            <summary>
+            During a topology build, this will determine the exchange type for a message,
+            given the exchange name (entity name) and routing key which have already been determined.
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.IExchangeTypeSelector.DefaultExchangeType">
+            <summary>
+            The default exchange type
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IExchangeTypeSelector.GetExchangeType``1(System.String)">
+            <summary>
+            Returns the exchange type for the send context
+            </summary>
+            <typeparam name="T">The message type</typeparam>
+            <param name="exchangeName">The exchange name</param>
+            <returns>The exchange type for the send</returns>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Topology.IMessageExchangeTypeSelector`1">
+            <summary>
+            Used to select the exchange type for a published message
+            </summary>
+            <typeparam name="TMessage">The message type</typeparam>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.IMessageExchangeTypeSelector`1.DefaultExchangeType">
+            <summary>
+            The default exchange type
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.IMessageExchangeTypeSelector`1.GetExchangeType(System.String)">
+            <summary>
+            Returns the exchange type for the message type
+            </summary>
+            <param name="exchangeName">The exchange name</param>
+            <returns>The exchange type for the send</returns>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Topology.ReceiveSettings">
+            <summary>
+            Specify the receive settings for a receive transport
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.ReceiveSettings.PrefetchCount">
+            <summary>
+            The number of unacknowledged messages to allow to be processed concurrently
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.ReceiveSettings.Exclusive">
+            <summary>
+            True if the queue receive should be exclusive and not shared
+            </summary>
+        </member>
+        <member name="P:MassTransit.ActiveMqTransport.Topology.ReceiveSettings.PurgeOnStartup">
+            <summary>
+            If True, and a queue name is specified, if the queue exists and has messages, they are purged at startup
+            If the connection is reset, messages are not purged until the service is reset
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.ReceiveSettings.GetInputAddress(System.Uri)">
+            <summary>
+            Get the input address for the transport on the specified host
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.SendSettings.GetSendAddress(System.Uri)">
+            <summary>
+            Returns the send address for the settings
+            </summary>
+            <param name="hostAddress"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Topology.SendSettings.GetBrokerTopology">
+            <summary>
+            Return the BrokerTopology to apply at startup (to create exchange and queue if binding is specified)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MassTransit.ActiveMqTransport.Transport.ActiveMqReceiveTransport.Start">
+            <summary>
+            Start the receive transport, returning a Task that can be awaited to signal the transport has
+            completely shutdown once the cancellation token is cancelled.
+            </summary>
+            <returns>A task that is completed once the transport is shut down</returns>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Transport.IConnectionContextSupervisor">
+            <summary>
+            Attaches a connection context to the value (shared, of course)
+            </summary>
+        </member>
+        <member name="T:MassTransit.ActiveMqTransport.Transport.ISessionContextSupervisor">
+            <summary>
+            Creates and caches a session on the connection
+            </summary>
+        </member>
+        <member name="M:MassTransit.ActiveMqConductorConfigurationExtensions.ServiceInstance(MassTransit.ActiveMqTransport.IActiveMqBusFactoryConfigurator,System.Action{MassTransit.Conductor.Configuration.IServiceInstanceConfigurator{MassTransit.ActiveMqTransport.IActiveMqReceiveEndpointConfigurator}})">
+            <summary>
+            Configure a service instance, which supports one or more receive endpoints, all of which are managed by conductor.
+            </summary>
+            <param name="configurator"></param>
+            <param name="configure"></param>
+        </member>
+    </members>
+</doc>
