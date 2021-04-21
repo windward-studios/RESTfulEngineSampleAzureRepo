@@ -75,7 +75,7 @@ namespace AzureRepositoryPlugin
         {
             // Add a request to storage
             JobInfoEntity entity = JobInfoEntity.FromJobRequestData(request, PartitionKey);
-            entity.Status = RepositoryStatus.JOB_STATUS.Pending;
+            entity.Status = (int)RepositoryStatus.JOB_STATUS.Pending;
 
             //TableResult result = await _jobInfoTable.UpsertEntity(entity);
             var insertOp = TableOperation.Insert(entity);
@@ -89,11 +89,12 @@ namespace AzureRepositoryPlugin
 
             string templateData = JsonConvert.SerializeObject(request.Template);
             string templateBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(templateData));
+            byte[] data = Convert.FromBase64String(templateBase64);
 
             try
             {
                 CloudBlockBlob blob = _jobTemplateBlob.GetBlockBlobReference(entity.JobId.ToString());
-                await blob.UploadTextAsync(templateBase64);
+                await blob.UploadFromByteArrayAsync(data, 0, data.Length);
             } catch(Exception e)
             {
                 Log.Error($"Exception uploading blob: {e}");
@@ -123,7 +124,7 @@ namespace AzureRepositoryPlugin
             // Update status for specific request
             JobInfoEntity entity = await GetRequestInfo(requestId);
 
-            entity.Status = newStatus;
+            entity.Status = (int)newStatus;
 
             //var result = await _jobInfoTable.ReplaceEntity(entity);
             //bool success = result.HttpStatusCode == 204;
@@ -143,7 +144,7 @@ namespace AzureRepositoryPlugin
         {
             // Set status to complete and add final document to blob
             JobInfoEntity entity = await GetRequestInfo(requestId);
-            entity.Status = RepositoryStatus.JOB_STATUS.Complete;
+            entity.Status = (int)RepositoryStatus.JOB_STATUS.Complete;
 
             //var result = await _jobInfoTable.ReplaceEntity(entity);
             //bool success = result.HttpStatusCode == 204;
@@ -256,9 +257,24 @@ namespace AzureRepositoryPlugin
             // Get a single JobInfoEntity
             //string filter = CloudTableUtils.Equal(CloudTableUtils.ROW_KEY, requestId.ToString());
             //JobInfoEntity entity = await _jobInfoTable.GetSingleEntity(filter);
-            var op = TableOperation.Retrieve(PartitionKey, requestId.ToString());
-            TableResult result = await _jobInfoTable.ExecuteAsync(op);
-            return (JobInfoEntity)result.Result;
+
+            //var op = TableOperation.Retrieve(PartitionKey, requestId.ToString());
+            //TableResult result = await _jobInfoTable.ExecuteAsync(op);
+            //JobInfoEntity e = result.Result as JobInfoEntity;
+            //return e;
+
+            TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>();
+            tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, requestId.ToString()));
+
+            IEnumerable<JobInfoEntity> data = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery);
+            List<JobInfoEntity> entities = new List<JobInfoEntity>();
+            foreach (var item in data)
+                entities.Add(item);
+
+            if (entities.Count == 0)
+                return null;
+
+            return entities.FirstOrDefault();
         }
 
         public async Task<Document> GetGeneratedReport(Guid requestId)
@@ -292,9 +308,8 @@ namespace AzureRepositoryPlugin
             //JobInfoEntity[] entities = await _jobInfoTable.GetEntities(filter);
             //if (entities.Length == 0)
             //    return null;
-            string query = "";
             TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>();
-            tableQuery = new TableQuery<JobInfoEntity>().Where(query);
+            tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.Equal, (int)RepositoryStatus.JOB_STATUS.Pending));
 
             IEnumerable<JobInfoEntity> data = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery);
             List<JobInfoEntity> entities = new List<JobInfoEntity>();
@@ -307,7 +322,7 @@ namespace AzureRepositoryPlugin
             JobInfoEntity oldestEntity = entities.OrderBy(d => d.CreationDate).ToArray().FirstOrDefault();
 
             // Set this entity to locked so no others use it and set to generating
-            oldestEntity.Status = RepositoryStatus.JOB_STATUS.Generating;
+            oldestEntity.Status = (int)RepositoryStatus.JOB_STATUS.Generating;
             var op = TableOperation.Replace(oldestEntity);
             TableResult result = await _jobInfoTable.ExecuteAsync(op);
             bool success = result.HttpStatusCode == 204;
@@ -326,7 +341,7 @@ namespace AzureRepositoryPlugin
             return new JobRequestData
             {
                 Template = template,
-                RequestType = oldestEntity.Type
+                RequestType = (RepositoryStatus.REQUEST_TYPE)oldestEntity.Type
             };
         }
 
@@ -350,8 +365,10 @@ namespace AzureRepositoryPlugin
 
             MemoryStream memoryStream = new MemoryStream();
             await blob.DownloadToStreamAsync(memoryStream);
-            string base64 = System.Text.Encoding.ASCII.GetString(memoryStream.ToArray());
-            T ret = JsonConvert.DeserializeObject<T>(base64);
+            //string base64 = System.Text.Encoding.ASCII.GetString(memoryStream.ToArray());
+            //string base64 = Convert.ToBase64String(memoryStream.ToArray());
+            string jsonBack = Encoding.UTF8.GetString(memoryStream.ToArray());
+            T ret = JsonConvert.DeserializeObject<T>(jsonBack);
             return ret;
 
             //if (!await _jobBlobContainer.DoesBlobExist(DOCUMENT_CONTAINER, id.ToString())) {

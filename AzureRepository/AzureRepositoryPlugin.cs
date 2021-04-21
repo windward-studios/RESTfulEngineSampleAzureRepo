@@ -96,6 +96,8 @@ namespace AzureRepository
             }
 
             Log.Debug($"Added job request [{jobData.Template.Guid}] to storage");
+
+            JobHandler?.Signal();
         }
 
         public string CreateRequest(Template template, RepositoryStatus.REQUEST_TYPE requestType)
@@ -214,7 +216,7 @@ namespace AzureRepository
         {
             AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             JobInfoEntity result = await storage.GetRequestInfo(Guid.Parse(guid));
-            return new RequestStatus(result.Status, result.Type);
+            return new RequestStatus((RepositoryStatus.JOB_STATUS)result.Status, (RepositoryStatus.REQUEST_TYPE)result.Type);
         }
 
         public TagTree GetTagTree(string guid)

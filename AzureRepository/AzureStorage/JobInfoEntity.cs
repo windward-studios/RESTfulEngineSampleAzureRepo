@@ -14,10 +14,10 @@ namespace AzureRepositoryPlugin.AzureStorage
         public Guid JobId { get; set; }
 
         [DataMember]
-        public RepositoryStatus.REQUEST_TYPE Type { get; set; }
+        public int Type { get; set; }
 
         [DataMember]
-        public RepositoryStatus.JOB_STATUS Status { get; set; }
+        public int Status { get; set; }
 
         [DataMember]
         public DateTime CreationDate { get; set; }
@@ -30,7 +30,7 @@ namespace AzureRepositoryPlugin.AzureStorage
                 RowKey = data.Template.Guid.ToString(),
                 JobId = Guid.Parse(data.Template.Guid),
                 CreationDate = data.CreationDate,
-                Type = data.RequestType,
+                Type = (int)data.RequestType,
             };
         }
     }

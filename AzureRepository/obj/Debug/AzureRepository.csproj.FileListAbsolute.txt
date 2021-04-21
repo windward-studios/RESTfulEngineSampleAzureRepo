@@ -292,4 +292,3 @@ D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\System.Configuration.C
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\System.Security.AccessControl.xml
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\System.Security.Permissions.xml
 D:\WindwardNEXT\AzureRepository\AzureRepository\bin\Debug\System.Security.Principal.Windows.xml
-D:\WindwardNEXT\AzureRepository\AzureRepository\obj\Debug\AzureRepository.csprojAssemblyReference.cache
