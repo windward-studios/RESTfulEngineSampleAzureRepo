@@ -44,10 +44,10 @@ namespace AzureRepository
         {
             // Config value setup
             string num = ConfigurationManager.AppSettings["hours.delete.jobs"] ?? "";
-            if (!float.TryParse(num, out float hours))
+            if (!int.TryParse(num, out int hours))
                 hours = 24;
-            //else
-            //    hours = Math.Max(1, hours);
+            else
+                hours = Math.Max(1, hours);
 
             timeSpanDeleteOldJobs = TimeSpan.FromHours(hours);
 
