@@ -12,6 +12,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -43,10 +44,10 @@ namespace AzureRepository
         {
             // Config value setup
             string num = ConfigurationManager.AppSettings["hours.delete.jobs"] ?? "";
-            if (!int.TryParse(num, out int hours))
+            if (!float.TryParse(num, out float hours))
                 hours = 24;
-            else
-                hours = Math.Max(1, hours);
+            //else
+            //    hours = Math.Max(1, hours);
 
             timeSpanDeleteOldJobs = TimeSpan.FromHours(hours);
 
@@ -74,8 +75,10 @@ namespace AzureRepository
 
             AddConsumers();
 
-            // Start the processor
-            //_producer.Start();
+            // Handle deleting old jobs
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
+            Task.Run(() => ManageOldRequests(token), token);
         }
 
         private void AddConsumers()
@@ -319,6 +322,18 @@ namespace AzureRepository
             // Also need those reverted generating jobs to generate once started back up (maybe an additional column?)
         }
 
+        private void DeleteOldJobs(DateTime cutoff)
+        {
+            var task = Task.Run(async () => await DeleteOldJobsAsync(cutoff));
+            task.Wait();
+        }
+
+        private async Task DeleteOldJobsAsync(DateTime cutoff)
+        {
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
+            var result = await storage.DeleteOldRequests(cutoff);
+        }
+
         private void CompleteJob(Template template)
         {
             if (shutDown || string.IsNullOrEmpty(template.Callback))
@@ -337,6 +352,24 @@ namespace AzureRepository
                 Log.Warn($"Callback for job {template.Guid} to url {template.Callback} threw exception {ex.Message}", ex);
                 // silently swallow the exception - this is a background thread.
             }
+        }
+
+        private void ManageOldRequests(CancellationToken ct)
+        {
+            while ((!shutDown) && (!ct.IsCancellationRequested))
+            {
+                if (datetimeLastCheckOldJobs + timeSpanCheckOldJobs < DateTime.Now)
+                {
+                    DateTime cutoff = DateTime.Now - timeSpanDeleteOldJobs;
+                    DeleteOldJobs(cutoff);
+                    datetimeLastCheckOldJobs = DateTime.Now;
+                }
+
+                // wait until needed again, or cancelled, or time to check for jobs.
+                WaitHandle.WaitAny(new WaitHandle[] { ct.WaitHandle }, timeSpanCheckOldJobs, false);
+            }
+            if (Log.IsDebugEnabled)
+                Log.Debug("FileSystemRepository management worker stopped");
         }
     }
 }

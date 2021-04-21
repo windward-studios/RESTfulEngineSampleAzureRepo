@@ -185,6 +185,22 @@ namespace AzureRepositoryPlugin
             return success;
         }
 
+        public async Task<int> DeleteOldRequests(DateTime cutoff)
+        {
+            TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForDate("CreationDate", QueryComparisons.LessThanOrEqual, cutoff));
+            IEnumerable<JobInfoEntity> data = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery);
+
+            int count = 0;
+            foreach (var item in data)
+            {
+                bool success = await DeleteRequest(item.JobId);
+                if (success)
+                    count++;
+            }
+
+            return count;
+        }
+
         public async Task<JobInfoEntity> GetRequestInfo(Guid requestId)
         {
             TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, requestId.ToString()));
