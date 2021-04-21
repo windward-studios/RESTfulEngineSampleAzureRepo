@@ -135,6 +135,7 @@ namespace AzureRepository
             var task = Task.Run(async () => await TakeRequestAsync());
             task.Wait();
             RepositoryRequest ret = task.Result;
+
             return ret;
         }
 
@@ -209,16 +210,8 @@ namespace AzureRepository
 
         public RequestStatus GetReportStatus(string guid)
         {
-            var task = Task.Run<RequestStatus>(async () => await GetReportStatusAsync(guid));
-            task.Wait();
-            RequestStatus res = task.Result;
-            return res;
-        }
-
-        private async Task<RequestStatus> GetReportStatusAsync(string guid)
-        {
             AzureStorageManager storage = StorageManager.GetAzureStorageManager();
-            JobInfoEntity result = await storage.GetRequestInfo(Guid.Parse(guid));
+            JobInfoEntity result = storage.GetRequestInfo(Guid.Parse(guid));
             return new RequestStatus((RepositoryStatus.JOB_STATUS)result.Status, (RepositoryStatus.REQUEST_TYPE)result.Type);
         }
 
@@ -314,12 +307,24 @@ namespace AzureRepository
 
         public void ShutDown()
         {
+            Log.Debug("AzureRepositoryPlugin.ShutDown() started...");
             shutDown = true;
-
             _producer.Stop();
 
+            Log.Debug("AzureRepositoryPlugin bus stopped");
+
             // Need to set all generating requests in azure storage back to pending
-            // Also need those reverted generating jobs to generate once started back up (maybe an additional column?)
+            var task = Task.Run(async () => await ShutDownAsync());
+            task.Wait();
+        }
+
+        private async Task<bool> ShutDownAsync()
+        {
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
+            bool success = await storage.RevertGeneratingJobsToPending();
+            if (success)
+                Log.Debug("All generating jobs reverted to pending");
+            return success;
         }
 
         private void DeleteOldJobs(DateTime cutoff)

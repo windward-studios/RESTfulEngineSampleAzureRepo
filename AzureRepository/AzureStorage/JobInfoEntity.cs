@@ -30,7 +30,7 @@ namespace AzureRepositoryPlugin.AzureStorage
                 RowKey = data.Template.Guid.ToString(),
                 JobId = Guid.Parse(data.Template.Guid),
                 CreationDate = data.CreationDate,
-                Type = (int)data.RequestType,
+                Type = (int)data.RequestType
             };
         }
     }

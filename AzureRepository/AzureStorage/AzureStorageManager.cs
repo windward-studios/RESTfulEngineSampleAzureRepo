@@ -101,7 +101,7 @@ namespace AzureRepositoryPlugin
         public async Task<bool> UpdateRequest(Guid requestId, RepositoryStatus.JOB_STATUS newStatus)
         {
             // Update status for specific request
-            JobInfoEntity entity = await GetRequestInfo(requestId);
+            JobInfoEntity entity = GetRequestInfo(requestId);
             entity.Status = (int)newStatus;
 
             var op = TableOperation.Replace(entity);
@@ -119,7 +119,7 @@ namespace AzureRepositoryPlugin
         public async Task<bool> CompleteRequest<T>(Guid requestId, T generatedEntity)
         {
             // Set status to complete and add final document to blob
-            JobInfoEntity entity = await GetRequestInfo(requestId);
+            JobInfoEntity entity = GetRequestInfo(requestId);
             entity.Status = (int)RepositoryStatus.JOB_STATUS.Complete;
 
             var op = TableOperation.Replace(entity);
@@ -146,7 +146,7 @@ namespace AzureRepositoryPlugin
         public async Task<bool> DeleteRequest(Guid requestId)
         {
             // Remove request from storage
-            JobInfoEntity entity = await GetRequestInfo(requestId);
+            JobInfoEntity entity = GetRequestInfo(requestId);
             var insertOp = TableOperation.Delete(entity);
             TableResult result = await _jobInfoTable.ExecuteAsync(insertOp);
             bool success = result.HttpStatusCode == 204;
@@ -185,6 +185,57 @@ namespace AzureRepositoryPlugin
             return success;
         }
 
+        public async Task<bool> RevertGeneratingJobsToPending()
+        {
+            TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.Equal, (int)RepositoryStatus.JOB_STATUS.Generating));
+            IEnumerable<JobInfoEntity> data = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery);
+            List<JobInfoEntity> entities = new List<JobInfoEntity>();
+            foreach (var item in data)
+            {
+                // revert status to pending and add to list to be updated
+                item.Status = (int)RepositoryStatus.JOB_STATUS.Pending;
+                entities.Add(item);
+            }
+
+            if (entities.Count == 0)
+                return true;
+
+            List<TableBatchOperation> batchOps = new List<TableBatchOperation>();
+            TableBatchOperation currentOp = new TableBatchOperation();
+
+            int count = 0;
+            foreach(var entity in entities)
+            {
+                if(count == 50)
+                {
+                    batchOps.Add(currentOp);
+                    currentOp = new TableBatchOperation();
+                    count = 0;
+                }
+
+                currentOp.Add(TableOperation.Replace(entity));
+                count++;
+            }
+
+            if (count > 0)
+                batchOps.Add(currentOp);
+
+
+            List<Task<IList<TableResult>>> tasks = new List<Task<IList<TableResult>>>();
+            foreach (var op in batchOps)
+            {
+                tasks.Add(_jobInfoTable.ExecuteBatchAsync(op));
+            }
+
+            IList<TableResult>[] results = await Task.WhenAll(tasks);
+            bool success = results.All(tbr => tbr.All(tr => tr.HttpStatusCode == 204));
+
+            if (!success)
+                Log.Error("Failed to revert all generating jobs to pending");
+
+            return success;
+        }
+
         public async Task<int> DeleteOldRequests(DateTime cutoff)
         {
             TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForDate("CreationDate", QueryComparisons.LessThanOrEqual, cutoff));
@@ -201,7 +252,7 @@ namespace AzureRepositoryPlugin
             return count;
         }
 
-        public async Task<JobInfoEntity> GetRequestInfo(Guid requestId)
+        public JobInfoEntity GetRequestInfo(Guid requestId)
         {
             TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, requestId.ToString()));
 
