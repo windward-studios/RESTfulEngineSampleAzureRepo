@@ -120,7 +120,11 @@ namespace AzureRepositoryPlugin
         {
             // Set status to complete and add final document to blob
             JobInfoEntity entity = GetRequestInfo(requestId);
-            entity.Status = (int)RepositoryStatus.JOB_STATUS.Complete;
+
+            if(generatedEntity is ServiceError)
+                entity.Status = (int)RepositoryStatus.JOB_STATUS.Error;
+            else
+                entity.Status = (int)RepositoryStatus.JOB_STATUS.Complete;
 
             var op = TableOperation.Replace(entity);
             TableResult result = await _jobInfoTable.ExecuteAsync(op);
@@ -293,8 +297,7 @@ namespace AzureRepositoryPlugin
 
         public async Task<JobRequestData> GetOldestPendingJobAndGenerate()
         {
-            TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>();
-            tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.Equal, (int)RepositoryStatus.JOB_STATUS.Pending));
+            TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.Equal, (int)RepositoryStatus.JOB_STATUS.Pending));
 
             IEnumerable<JobInfoEntity> data = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery);
             List<JobInfoEntity> entities = new List<JobInfoEntity>();

@@ -240,7 +240,11 @@ namespace AzureRepository
         private async Task SaveErrorAsync(Template template, ServiceError error)
         {
             AzureStorageManager storage = StorageManager.GetAzureStorageManager();
-            var result = await storage.CompleteRequest(Guid.Parse(template.Guid), error);
+            var result = await storage.UpdateRequest(Guid.Parse(template.Guid), RepositoryStatus.JOB_STATUS.Error);
+            if (!result)
+                Log.Error($"Failed to save error status {template.Guid}");
+
+            result = await storage.CompleteRequest(Guid.Parse(template.Guid), error);
             if (result)
                 Log.Debug($"Successfully saved error {template.Guid}");
             else
