@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Cosmos.Table;
+﻿using Microsoft.WindowsAzure.Storage.Table;
 using RESTfulEngine.DocumentRepository;
 using System;
 using System.Collections.Generic;

@@ -12,7 +12,6 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -88,7 +87,7 @@ namespace AzureRepository
         {
             // Add the request to storage
             JobRequestData jobData = args.Message;
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             bool success = await storage.AddRequest(jobData);
 
             if (!success)
@@ -136,7 +135,7 @@ namespace AzureRepository
 
         private async Task<RepositoryRequest> TakeRequestAsync()
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             JobRequestData job = await storage.GetOldestPendingJobAndGenerate();
 
             if (job == null)
@@ -153,7 +152,7 @@ namespace AzureRepository
 
         private async Task<bool> DeleteReportAsync(string guid)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             bool result = await storage.DeleteRequest(Guid.Parse(guid));
             return result;
         }
@@ -168,7 +167,7 @@ namespace AzureRepository
 
         private async Task<ServiceError> GetErrorAsync(string guid)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.GetError(Guid.Parse(guid));
             return result;
         }
@@ -183,7 +182,7 @@ namespace AzureRepository
 
         private async Task<Metrics> GetMetricsAsync(string guid)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.GetMetrics(Guid.Parse(guid));
             return result;
         }
@@ -198,7 +197,7 @@ namespace AzureRepository
 
         private async Task<Document> GetReportAsync(string guid)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.GetGeneratedReport(Guid.Parse(guid));
             return result;
         }
@@ -213,7 +212,7 @@ namespace AzureRepository
 
         private async Task<RequestStatus> GetReportStatusAsync(string guid)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             JobInfoEntity result = await storage.GetRequestInfo(Guid.Parse(guid));
             return new RequestStatus(result.Status, result.Type);
         }
@@ -228,7 +227,7 @@ namespace AzureRepository
 
         private async Task<TagTree> GetTagTreeAsync(string guid)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.GetTagTree(Guid.Parse(guid));
             return result;
         }
@@ -242,7 +241,7 @@ namespace AzureRepository
 
         private async Task SaveErrorAsync(Template template, ServiceError error)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.CompleteRequest(Guid.Parse(template.Guid), error);
             if (result)
                 Log.Debug($"Successfully saved error {template.Guid}");
@@ -259,7 +258,7 @@ namespace AzureRepository
 
         private async Task SaveMetricsAsync(Template template, Metrics metrics)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.CompleteRequest(Guid.Parse(template.Guid), metrics);
             if (result)
                 Log.Debug($"Successfully saved metrics {template.Guid}");
@@ -276,7 +275,7 @@ namespace AzureRepository
 
         private async Task SaveReportAsync(Template template, Document document)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.CompleteRequest(Guid.Parse(template.Guid), document);
             if (result)
                 Log.Debug($"Successfully saved document {template.Guid}");
@@ -293,7 +292,7 @@ namespace AzureRepository
 
         private async Task SaveTagTreeAsync(Template template, TagTree tree)
         {
-            AzureStorageManager storage = await StorageManager.GetAzureStorageManager();
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.CompleteRequest(Guid.Parse(template.Guid), tree);
             if (result)
                 Log.Debug($"Successfully saved tag tree {template.Guid}");

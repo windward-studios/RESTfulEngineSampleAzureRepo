@@ -14,9 +14,9 @@ namespace AzureRepositoryPlugin.AzureStorage
             AzureStorageFactory = new AzureStorageManagerFactory();
         }
 
-        public async Task<AzureStorageManager> GetAzureStorageManager()
+        public AzureStorageManager GetAzureStorageManager()
         {
-            return await AzureStorageFactory.CreateTemplateStoragePlugin();
+            return AzureStorageFactory.CreateTemplateStoragePlugin();
         }
     }
 }

@@ -1,27 +1,23 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AzureRepositoryPlugin.AzureStorage;
-using Microsoft.Azure.Cosmos.Table;
 using RESTfulEngine.DocumentRepository;
-using AzureStorage.Blobs;
-using AzureStorage.Tables;
 using RESTfulEngine.Models;
 using log4net;
 using System.Configuration;
-using Azure.Storage.Blobs.Models;
-using Azure;
 using Newtonsoft.Json;
 using System.Text;
 using System.IO;
 using System.Linq;
+using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.WindowsAzure.Storage;
+using System.Collections.Generic;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzureRepositoryPlugin
 {
     public class AzureStorageManager
     {
-        private readonly ICloudTableFactory _tableFactory;
-        private readonly IBlobContainerFactory _blobFactory;
-
         private readonly string _storageConnectionString;
 
         protected const string JOB_INFO_TABLE_NAME = "RestJobInfoTable";
@@ -30,26 +26,49 @@ namespace AzureRepositoryPlugin
         private const string TEMPLATE_CONTAINER = "templates";
         private const string DOCUMENT_CONTAINER = "generateddocuments";
 
-        protected ICloudTableWrapper<JobInfoEntity> _jobInfoTable;
+        //protected ICloudTableWrapper<JobInfoEntity> _jobInfoTable;
+        private CloudTable _jobInfoTable;
+        private CloudStorageAccount _storageAccount;
+        private CloudTableClient _tableClient;
 
-        protected IBlobContainerWrapper _jobBlobContainer;
+        private CloudBlobClient _blobClient;
+        private CloudBlobContainer _jobTemplateBlob;
+        private CloudBlobContainer _jobDocumentBlob;
 
         private readonly string PartitionKey = Guid.Empty.ToString();
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(AzureStorageManager));
 
-        public AzureStorageManager(ICloudTableFactory tableFactory, IBlobContainerFactory blobFactory)
+        public AzureStorageManager()
         {
-            _tableFactory = tableFactory;
-            _blobFactory = blobFactory;
-
             _storageConnectionString = ConfigurationManager.AppSettings["AzureRepository:StorageConnectionString"];
         }
 
-        public async Task Init()
+        public void Init()
         {
-            _jobInfoTable = await _tableFactory.CreateCloudTableWrapper<JobInfoEntity>(_storageConnectionString, JOB_INFO_TABLE_NAME);
-            _jobBlobContainer = await _blobFactory.CreateBlobContainerWrapper(_storageConnectionString, JOB_BLOB_NAME);
+            try
+            {
+                _storageAccount = CloudStorageAccount.Parse(_storageConnectionString);
+                _tableClient = _storageAccount.CreateCloudTableClient();
+
+                _jobInfoTable = _tableClient.GetTableReference(JOB_INFO_TABLE_NAME);
+                _jobInfoTable.CreateIfNotExists();
+
+                _blobClient = _storageAccount.CreateCloudBlobClient();
+                _jobTemplateBlob = _blobClient.GetContainerReference(TEMPLATE_CONTAINER);
+                _jobTemplateBlob.CreateIfNotExists();
+
+                _jobDocumentBlob = _blobClient.GetContainerReference(DOCUMENT_CONTAINER);
+                _jobDocumentBlob.CreateIfNotExists();
+            } catch(StorageException e)
+            {
+                Log.Error("STORAGE EXCEPTION: " + e);
+            } catch (Exception ex)
+            {
+                Log.Error("EXCEPTION: " + ex);
+            }
+            //_jobInfoTable = await _tableFactory.CreateCloudTableWrapper<JobInfoEntity>(_storageConnectionString, JOB_INFO_TABLE_NAME);
+            //_jobBlobContainer = await _blobFactory.CreateBlobContainerWrapper(_storageConnectionString, JOB_BLOB_NAME);
         }
 
         public async Task<bool> AddRequest(JobRequestData request)
@@ -58,7 +77,9 @@ namespace AzureRepositoryPlugin
             JobInfoEntity entity = JobInfoEntity.FromJobRequestData(request, PartitionKey);
             entity.Status = RepositoryStatus.JOB_STATUS.Pending;
 
-            TableResult result = await _jobInfoTable.UpsertEntity(entity);
+            //TableResult result = await _jobInfoTable.UpsertEntity(entity);
+            var insertOp = TableOperation.Insert(entity);
+            TableResult result = await _jobInfoTable.ExecuteAsync(insertOp);
             bool success = result.HttpStatusCode == 204;
 
             if (success)
@@ -69,16 +90,25 @@ namespace AzureRepositoryPlugin
             string templateData = JsonConvert.SerializeObject(request.Template);
             string templateBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(templateData));
 
-            Response<BlobContentInfo> response = null;
             try
             {
-                response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, entity.JobId.ToString(), templateBase64);
+                CloudBlockBlob blob = _jobTemplateBlob.GetBlockBlobReference(entity.JobId.ToString());
+                await blob.UploadTextAsync(templateBase64);
             } catch(Exception e)
             {
-                Log.Error($"Exception {e}");
+                Log.Error($"Exception uploading blob: {e}");
             }
 
-            success &= response.GetRawResponse().Status == 201;
+            //Response<BlobContentInfo> response = null;
+            //try
+            //{
+            //    response = await _jobBlobContainer.UploadBase64(TEMPLATE_CONTAINER, entity.JobId.ToString(), templateBase64);
+            //} catch(Exception e)
+            //{
+            //    Log.Error($"Exception {e}");
+            //}
+
+            //success &= response.GetRawResponse().Status == 201;
 
             if (success)
                 Log.Debug($"Added template [{request.Template.Guid}] to blob storage");
@@ -95,7 +125,10 @@ namespace AzureRepositoryPlugin
 
             entity.Status = newStatus;
 
-            var result = await _jobInfoTable.ReplaceEntity(entity);
+            //var result = await _jobInfoTable.ReplaceEntity(entity);
+            //bool success = result.HttpStatusCode == 204;
+            var insertOp = TableOperation.Replace(entity);
+            TableResult result = await _jobInfoTable.ExecuteAsync(insertOp);
             bool success = result.HttpStatusCode == 204;
 
             if (success)
@@ -112,7 +145,10 @@ namespace AzureRepositoryPlugin
             JobInfoEntity entity = await GetRequestInfo(requestId);
             entity.Status = RepositoryStatus.JOB_STATUS.Complete;
 
-            var result = await _jobInfoTable.ReplaceEntity(entity);
+            //var result = await _jobInfoTable.ReplaceEntity(entity);
+            //bool success = result.HttpStatusCode == 204;
+            var op = TableOperation.Replace(entity);
+            TableResult result = await _jobInfoTable.ExecuteAsync(op);
             bool success = result.HttpStatusCode == 204;
 
             if (success)
@@ -122,43 +158,51 @@ namespace AzureRepositoryPlugin
 
 
             // Upload generated document to blob
-            Response<BlobContentInfo> response = null;
-
+            //Response<BlobContentInfo> response = null;
+            CloudBlockBlob blob = null;
             // May be able to do this on generic object and won't need switch
             switch (generatedEntity)
             {
                 case Document document:
                     string documentData = JsonConvert.SerializeObject(document);
                     string documentBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(documentData));
-                    response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, requestId.ToString(), documentBase64);
+                    //response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, requestId.ToString(), documentBase64);
+                    blob = _jobDocumentBlob.GetBlockBlobReference(entity.JobId.ToString());
+                    await blob.UploadTextAsync(documentBase64);
                     //response = await _jobBlobContainer.UploadBinaryData(CONTAINER_NAME, requestId.ToString(), document.Data);
                     break;
                 case Metrics metrics:
                     string metricsData = JsonConvert.SerializeObject(metrics);
                     string metricsBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(metricsData));
-                    response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, requestId.ToString(), metricsBase64);
+                    //response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, requestId.ToString(), metricsBase64);
+                    blob = _jobDocumentBlob.GetBlockBlobReference(entity.JobId.ToString());
+                    await blob.UploadTextAsync(metricsBase64);
                     break;
                 case TagTree tagTree:
                     string tagTreeData = JsonConvert.SerializeObject(tagTree);
                     string tagTreeBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(tagTreeData));
-                    response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, requestId.ToString(), tagTreeBase64);
+                    //response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, requestId.ToString(), tagTreeBase64);
+                    blob = _jobDocumentBlob.GetBlockBlobReference(entity.JobId.ToString());
+                    await blob.UploadTextAsync(tagTreeBase64);
                     break;
                 case ServiceError error:
                     string errorData = JsonConvert.SerializeObject(error);
                     string errorBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(errorData));
-                    response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, requestId.ToString(), errorBase64);
+                    //response = await _jobBlobContainer.UploadBase64(DOCUMENT_CONTAINER, requestId.ToString(), errorBase64);
+                    blob = _jobDocumentBlob.GetBlockBlobReference(entity.JobId.ToString());
+                    await blob.UploadTextAsync(errorBase64);
                     break;
                 default:
                     Log.Error("Unable to store blob for unknown entity type");
                     return false;
             }
 
-            success &= response.GetRawResponse().Status == 201;
+            //success &= response.GetRawResponse().Status == 201;
 
             if (success)
                 Log.Debug($"Added generated entity [{requestId}] status to blob storage");
             else
-                Log.Error($"Failed to add generated entity [{requestId}] to blob storage: {response.GetRawResponse().Status}");
+                Log.Error($"Failed to add generated entity [{requestId}] to blob storage");
 
             return success;
         }
@@ -167,8 +211,11 @@ namespace AzureRepositoryPlugin
         {
             // Remove request from storage
             JobInfoEntity entity = await GetRequestInfo(requestId);
-            TableResult result = await _jobInfoTable.DeleteEntity(entity);
+            var insertOp = TableOperation.Delete(entity);
+            TableResult result = await _jobInfoTable.ExecuteAsync(insertOp);
             bool success = result.HttpStatusCode == 204;
+            //TableResult result = await _jobInfoTable.DeleteEntity(entity);
+            //bool success = result.HttpStatusCode == 204;
 
             if (success)
                 Log.Debug($"Successfully deleted request [{requestId}] from table storage");
@@ -176,10 +223,11 @@ namespace AzureRepositoryPlugin
                 Log.Error($"Failed to delete request [{requestId}] from table storage: {result.HttpStatusCode}");
 
             // Delete template if exists
-            if (await _jobBlobContainer.DoesBlobExist(TEMPLATE_CONTAINER, requestId.ToString()))
+            CloudBlob templateBlob = _jobTemplateBlob.GetBlobReference(requestId.ToString());
+            if (templateBlob != null)
             {
-                var response = await _jobBlobContainer.DeleteBlob(TEMPLATE_CONTAINER, requestId.ToString());
-                success &= response.GetRawResponse().Status == 202;
+                bool response = await templateBlob.DeleteIfExistsAsync();
+                success &= response;
 
                 if (success)
                     Log.Debug($"Successfully deleted request [{requestId}] from blob storage");
@@ -188,10 +236,11 @@ namespace AzureRepositoryPlugin
             }
 
             // Delete generated doc if exists
-            if (await _jobBlobContainer.DoesBlobExist(DOCUMENT_CONTAINER, requestId.ToString()))
+            CloudBlob documentBlob = _jobDocumentBlob.GetBlobReference(requestId.ToString());
+            if (documentBlob != null)
             {
-                var response = await _jobBlobContainer.DeleteBlob(DOCUMENT_CONTAINER, requestId.ToString());
-                success &= response.GetRawResponse().Status == 202;
+                bool response = await documentBlob.DeleteIfExistsAsync();
+                success &= response;
 
                 if (success)
                     Log.Debug($"Successfully deleted request [{requestId}] from blob storage");
@@ -205,9 +254,11 @@ namespace AzureRepositoryPlugin
         public async Task<JobInfoEntity> GetRequestInfo(Guid requestId)
         {
             // Get a single JobInfoEntity
-            string filter = CloudTableUtils.Equal(CloudTableUtils.ROW_KEY, requestId.ToString());
-            JobInfoEntity entity = await _jobInfoTable.GetSingleEntity(filter);
-            return entity;
+            //string filter = CloudTableUtils.Equal(CloudTableUtils.ROW_KEY, requestId.ToString());
+            //JobInfoEntity entity = await _jobInfoTable.GetSingleEntity(filter);
+            var op = TableOperation.Retrieve(PartitionKey, requestId.ToString());
+            TableResult result = await _jobInfoTable.ExecuteAsync(op);
+            return (JobInfoEntity)result.Result;
         }
 
         public async Task<Document> GetGeneratedReport(Guid requestId)
@@ -237,16 +288,28 @@ namespace AzureRepositoryPlugin
         public async Task<JobRequestData> GetOldestPendingJobAndGenerate()
         {
             // get the oldest pending job, set the lock property to true (atomic), and set status to generating
-            string filter = CloudTableUtils.And(CloudTableUtils.EqualInt("Status", (int)RepositoryStatus.JOB_STATUS.Pending), CloudTableUtils.EqualBool("Locked", false));
-            JobInfoEntity[] entities = await _jobInfoTable.GetEntities(filter);
-            if (entities.Length == 0)
+            //string filter = CloudTableUtils.And(CloudTableUtils.EqualInt("Status", (int)RepositoryStatus.JOB_STATUS.Pending), CloudTableUtils.EqualBool("Locked", false));
+            //JobInfoEntity[] entities = await _jobInfoTable.GetEntities(filter);
+            //if (entities.Length == 0)
+            //    return null;
+            string query = "";
+            TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>();
+            tableQuery = new TableQuery<JobInfoEntity>().Where(query);
+
+            IEnumerable<JobInfoEntity> data = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery);
+            List<JobInfoEntity> entities = new List<JobInfoEntity>();
+            foreach (var item in data)
+                entities.Add(item);
+
+            if (entities.Count == 0)
                 return null;
 
             JobInfoEntity oldestEntity = entities.OrderBy(d => d.CreationDate).ToArray().FirstOrDefault();
 
             // Set this entity to locked so no others use it and set to generating
             oldestEntity.Status = RepositoryStatus.JOB_STATUS.Generating;
-            var result = await _jobInfoTable.ReplaceEntity(oldestEntity);
+            var op = TableOperation.Replace(oldestEntity);
+            TableResult result = await _jobInfoTable.ExecuteAsync(op);
             bool success = result.HttpStatusCode == 204;
 
             if (!success)
@@ -269,15 +332,37 @@ namespace AzureRepositoryPlugin
 
         private async Task<T> GetEntityFromBlob<T>(Guid id, string container)
         {
-            if (!await _jobBlobContainer.DoesBlobExist(TEMPLATE_CONTAINER, id.ToString())) {
+            CloudBlockBlob blob = null;
+            if(container.Equals(TEMPLATE_CONTAINER))
+            {
+                blob = _jobTemplateBlob.GetBlockBlobReference(id.ToString());
+            } 
+            else
+            {
+                blob = _jobDocumentBlob.GetBlockBlobReference(id.ToString());
+            }
+
+            if (!await blob.ExistsAsync())
+            {
                 Log.Error($"Blob [{id}] does not exist in container {container}");
                 return default(T);
             }
 
-            MemoryStream ms = await _jobBlobContainer.GetInMemory(DOCUMENT_CONTAINER, id.ToString());
-            string base64 = System.Text.Encoding.ASCII.GetString(ms.ToArray());
+            MemoryStream memoryStream = new MemoryStream();
+            await blob.DownloadToStreamAsync(memoryStream);
+            string base64 = System.Text.Encoding.ASCII.GetString(memoryStream.ToArray());
             T ret = JsonConvert.DeserializeObject<T>(base64);
             return ret;
+
+            //if (!await _jobBlobContainer.DoesBlobExist(DOCUMENT_CONTAINER, id.ToString())) {
+            //    Log.Error($"Blob [{id}] does not exist in container {container}");
+            //    return default(T);
+            //}
+
+            //MemoryStream ms = await _jobBlobContainer.GetInMemory(DOCUMENT_CONTAINER, id.ToString());
+            //string base64 = System.Text.Encoding.ASCII.GetString(ms.ToArray());
+            //T ret = JsonConvert.DeserializeObject<T>(base64);
+            //return ret;
         }
     }
 }
