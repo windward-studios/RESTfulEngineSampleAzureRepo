@@ -62,13 +62,11 @@ namespace AzureRepositoryPlugin
                 _jobDocumentBlob.CreateIfNotExists();
             } catch(StorageException e)
             {
-                Log.Error("STORAGE EXCEPTION: " + e);
+                Log.Error("STORAGE EXCEPTION on init: " + e);
             } catch (Exception ex)
             {
-                Log.Error("EXCEPTION: " + ex);
+                Log.Error("EXCEPTION on init: " + ex);
             }
-            //_jobInfoTable = await _tableFactory.CreateCloudTableWrapper<JobInfoEntity>(_storageConnectionString, JOB_INFO_TABLE_NAME);
-            //_jobBlobContainer = await _blobFactory.CreateBlobContainerWrapper(_storageConnectionString, JOB_BLOB_NAME);
         }
 
         public async Task<bool> AddRequest(JobRequestData request)

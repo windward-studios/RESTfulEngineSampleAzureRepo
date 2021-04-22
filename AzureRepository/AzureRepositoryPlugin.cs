@@ -229,6 +229,22 @@ namespace AzureRepository
             var result = await storage.GetTagTree(Guid.Parse(guid));
             return result;
         }
+        public DocumentMeta GetReportMeta(string guid)
+        {
+            var task = Task.Run<DocumentMeta>(async () => await GetReportMetaAsync(guid));
+            task.Wait();
+            DocumentMeta res = task.Result;
+            return res;
+        }
+
+        public async Task<DocumentMeta> GetReportMetaAsync(string guid)
+        {
+
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
+            Document doc = await storage.GetGeneratedReport(Guid.Parse(guid));
+            DocumentMeta ret = SetReportMeta(doc);
+            return ret;
+        }
 
         public void SaveError(Template template, ServiceError error)
         {
@@ -379,6 +395,26 @@ namespace AzureRepository
             }
             if (Log.IsDebugEnabled)
                 Log.Debug("FileSystemRepository management worker stopped");
+        }
+
+        private DocumentMeta SetReportMeta(Document genDoc)
+        {
+            DocumentMeta largeDoc = new DocumentMeta();
+            largeDoc.Guid = genDoc.Guid;
+            largeDoc.NumberOfPages = genDoc.NumberOfPages;
+            largeDoc.ImportInfo = genDoc.ImportInfo;
+            largeDoc.Tag = genDoc.Tag;
+            largeDoc.Errors = genDoc.Errors;
+
+            if (genDoc.Pages == null)
+            {
+                Uri url = HttpContext.Current.Request.Url; ;
+                string tempUri = url.AbsoluteUri.ToString();
+                tempUri = tempUri.Substring(0, tempUri.Length - 4);
+                largeDoc.Uri = tempUri + "file";
+            }
+
+            return largeDoc;
         }
     }
 }
