@@ -20,7 +20,7 @@ steps:
 - task: PythonScript@0
   inputs:
     scriptSource: 'inline'
-    script: from urllib.request import urlretrieve; print('$(downloadUrl)'); urlretrieve('$(downloadUrl)', 'publish/RESTfulEngine.zip')
+    script: from urllib.request import urlretrieve; print('$(downloadUrl)'); urlretrieve('$(downloadUrl)', '$(System.DefaultWorkingDirectory)/RESTfulEngine.zip')
 
 - task: ExtractFiles@1
   inputs:
