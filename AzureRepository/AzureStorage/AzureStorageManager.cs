@@ -295,22 +295,30 @@ namespace AzureRepositoryPlugin
 
         public async Task<JobRequestData> GetOldestPendingJobAndGenerate()
         {
+            Log.Info("In GetOldestPendingJobAndGenerate");
             TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.Equal, (int)RepositoryStatus.JOB_STATUS.Pending));
+            Log.Info("Table query: " + tableQuery.ToString());
 
             IEnumerable<JobInfoEntity> data = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery);
+            Log.Info("Query executed");
             List<JobInfoEntity> entities = new List<JobInfoEntity>();
             foreach (var item in data)
                 entities.Add(item);
+
+            Log.Info("Number of entities: " + entities.Count);
 
             if (entities.Count == 0)
                 return null;
 
             JobInfoEntity oldestEntity = entities.OrderBy(d => d.CreationDate).ToArray().FirstOrDefault();
 
+            Log.Info("Oldest entity: " + oldestEntity.JobId);
+
             // Set this entity to locked so no others use it and set to generating
             oldestEntity.Status = (int)RepositoryStatus.JOB_STATUS.Generating;
             var op = TableOperation.Replace(oldestEntity);
             TableResult result = await _jobInfoTable.ExecuteAsync(op);
+            Log.Info("Updated entity to generating");
             bool success = result.HttpStatusCode == 204;
 
             if (!success)
@@ -319,10 +327,11 @@ namespace AzureRepositoryPlugin
                 return null;
             }
 
-            Log.Debug($"Updated job entity [{oldestEntity.JobId}] to generating.");
+            Log.Info($"Updated job entity [{oldestEntity.JobId}] to generating.");
 
             // Get the template for this job
             Template template = await GetEntityFromBlob<Template>(oldestEntity.JobId, TEMPLATE_CONTAINER);
+            Log.Info("Got template entity from blob");
 
             return new JobRequestData
             {
