@@ -1,0 +1,35 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  buildVersion: $[ variables['version'] ]
+
+name: $(buildVersion)$(Rev:.r)
+
+steps:
+- task: PythonScript@0
+  inputs:
+    scriptSource: 'inline'
+    script: from urllib.request import urlretrieve; urlretrieve('https://cdn.windwardstudios.com/?prefix=Archive/20.X/$(buildVersion)/RESTfulEngine.zip', 'RESTfulEngine.zip')
+    
+- task: ExtractFiles@1
+  inputs:
+    archiveFilePatterns: '**/RESTfulEngine.zip'
+    destinationFolder: 'publish'
+    cleanDestinationFolder: true
+    overwriteExistingFiles: false
+
+- task: PublishBuildArtifacts@1 
+  inputs: 
+    PathtoPublish: 'publish' 
+    ArtifactName: 'RESTfulEngine' 
+    publishLocation: 'Container' 
