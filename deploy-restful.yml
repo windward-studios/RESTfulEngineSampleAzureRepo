@@ -12,6 +12,7 @@ pool:
 variables:
   buildConfiguration: 'Release'
   buildVersion: $[ variables['version'] ]
+  downloadUrl: 'https://cdn.windwardstudios.com/?prefix=Archive/20.X/$(buildVersion)/RESTfulEngine.zip'
 
 name: $(buildVersion)$(Rev:.r)
 
@@ -19,8 +20,8 @@ steps:
 - task: PythonScript@0
   inputs:
     scriptSource: 'inline'
-    script: from urllib.request import urlretrieve; urlretrieve('https://cdn.windwardstudios.com/?prefix=Archive/20.X/$(buildVersion)/RESTfulEngine.zip', 'RESTfulEngine.zip')
-    
+    script: from urllib.request import urlretrieve; urlretrieve('$(downloadUrl)', 'RESTfulEngine.zip')
+
 - task: ExtractFiles@1
   inputs:
     archiveFilePatterns: '**/RESTfulEngine.zip'
