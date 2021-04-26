@@ -35,9 +35,6 @@ namespace AzureRepository
 
         private bool shutDown;
 
-        //private EventBusProducer _producer;
-        //private EventBusConsumer _consumer;
-
         private StorageManager StorageManager;
 
         public AzureRepositoryPlugin()
@@ -62,19 +59,6 @@ namespace AzureRepository
             // Inititalize storage
             StorageManager = new StorageManager();
 
-            //_consumer = new EventBusConsumer();
-            //_consumer.Create(ep =>
-            //{
-            //    EventConsumer.AddToEndpoint(ep);
-            //});
-            //_consumer.Start();
-
-            //// Initialize Service Bus components
-            //_producer = new EventBusProducer();
-            //_producer.Start();
-
-            //AddConsumers();
-
             // Handle deleting old jobs
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
@@ -82,28 +66,6 @@ namespace AzureRepository
 
             Log.Info("AzureRepositoryPlugin constructor finished");
         }
-
-        //private void AddConsumers()
-        //{
-        //    //EventConsumer.OnMessageConsumed += MessageHandler;
-        //}
-
-        //private async Task MessageHandler(object sender, EventArgs<JobRequestData> args)
-        //{
-        //    // Add the request to storage
-        //    //JobRequestData jobData = args.Message;
-        //    //AzureStorageManager storage = StorageManager.GetAzureStorageManager();
-        //    //bool success = await storage.AddRequest(jobData);
-
-        //    //if (!success)
-        //    //{
-        //    //    Log.Error($"Failed to add job request [{jobData.Template.Guid}] to storage");
-        //    //}
-
-        //    //Log.Debug($"Added job request [{jobData.Template.Guid}] to storage");
-
-        //    //JobHandler?.Signal();
-        //}
 
         public string CreateRequest(Template template, RepositoryStatus.REQUEST_TYPE requestType)
         {

@@ -37,11 +37,6 @@
     <Compile Include="AzureStorage\AzureStorageManagerFactory.cs" />
     <Compile Include="AzureStorage\JobInfoEntity.cs" />
     <Compile Include="AzureStorage\StorageManager.cs" />
-    <Compile Include="EventBus\EventArgs.cs" />
-    <Compile Include="EventBus\EventBus.cs" />
-    <Compile Include="EventBus\EventBusConsumer.cs" />
-    <Compile Include="EventBus\EventBusProducer.cs" />
-    <Compile Include="EventBus\EventConsumer.cs" />
     <Compile Include="JobRequestData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AzureRepositoryPlugin.cs" />
