@@ -1,6 +1,5 @@
 ﻿using AzureRepositoryPlugin;
 using AzureRepositoryPlugin.AzureStorage;
-using AzureRepositoryPlugin.EventBus;
 using log4net;
 using Newtonsoft.Json;
 using RESTfulEngine.BusinessLogic;
