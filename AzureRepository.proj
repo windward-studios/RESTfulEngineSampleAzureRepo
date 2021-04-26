@@ -1,0 +1,52 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="help" ToolsVersion="Current">
+    <PropertyGroup>
+        <Configuration>Debug</Configuration>
+        <PublishDest>$(SolutionDir)publish\</PublishDest>
+        <NugetDest>$(SolutionDir)..\publish\</NugetDest>
+    </PropertyGroup>
+
+    <Target Name="SetDebug">
+        <PropertyGroup>
+            <Configuration>Debug</Configuration>
+        </PropertyGroup>
+    </Target>
+
+    <Target Name="SetRelease">
+        <PropertyGroup>
+            <Configuration>Release</Configuration>
+        </PropertyGroup>
+    </Target>
+
+    <Target Name="clean">
+        <Message Text="Cleaning directories..." />
+        <RemoveDir Directories="$(PublishDest)" />
+        <MSBuild Projects="AzureRepositoryPlugin.sln" Targets="Clean" Properties="Configuration=$(Configuration);SolutionDir=$(MSBuildProjectDirectory)\"/>
+    </Target>
+
+    <Target Name="doBuild" DependsOnTargets="clean">
+        <Message Text="Building AzureRepository solution..." />
+        <MSBuild Projects="AzureRepositoryPlugin.sln" Targets="Build" Properties="Configuration=$(Configuration);SolutionDir=$(MSBuildProjectDirectory)\" />
+    </Target>
+
+    <Target Name="buildDebug" DependsOnTargets="SetDebug">
+        <CallTarget Targets="clean;doBuild"/>
+    </Target>
+
+    <Target Name="build" DependsOnTargets="SetRelease">
+        <CallTarget Targets="clean;doBuild"/>
+    </Target>
+
+    <Target Name="doPublish" DependsOnTargets="doBuild">
+        <Exec Command="dotnet publish -c $(Configuration) -o $(PublishDest)" />
+        <Copy SourceFiles="nuget.exe" DestinationFolder="$(PublishDest)" />
+    </Target>
+
+    <Target Name="publishDebug" DependsOnTargets="SetDebug">
+        <CallTarget Targets="doPublish" />
+    </Target>
+
+    <Target Name="publish" DependsOnTargets="SetRelease">
+        <CallTarget Targets="doPublish" />
+    </Target>
+
+</Project>
