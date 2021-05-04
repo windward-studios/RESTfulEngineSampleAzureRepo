@@ -39,10 +39,10 @@ namespace AzureRepositoryPlugin
 
         public AzureStorageManager()
         {
-            _storageConnectionString = ConfigurationManager.AppSettings["AzureRepository:StorageConnectionString"];
-            JobInfoTableName = ConfigurationManager.AppSettings["AzureRepository:RestJobInfoTable"];
-            _templateContainer = ConfigurationManager.AppSettings["AzureRepository:TemplateContainer"];
-            _documentContainer = ConfigurationManager.AppSettings["AzureRepository:DocumentContainer"];
+            _storageConnectionString = ConfigurationManager.AppSettings["AzureRepositoryStorageConnectionString"];
+            JobInfoTableName = ConfigurationManager.AppSettings["AzureRepositoryRestJobInfoTable"];
+            _templateContainer = ConfigurationManager.AppSettings["AzureRepositoryTemplateContainer"];
+            _documentContainer = ConfigurationManager.AppSettings["AzureRepositoryDocumentContainer"];
         }
 
         public void Init()
