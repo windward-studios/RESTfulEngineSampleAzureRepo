@@ -20,13 +20,11 @@ namespace AzureRepositoryPlugin
     {
         private readonly string _storageConnectionString;
 
-        protected const string JOB_INFO_TABLE_NAME = "RestJobInfoTable";
-        private const string JOB_BLOB_NAME = "restjobblobs";
+        protected readonly string JobInfoTableName;
 
-        private const string TEMPLATE_CONTAINER = "templates";
-        private const string DOCUMENT_CONTAINER = "generateddocuments";
+        private readonly string _templateContainer;
+        private readonly string _documentContainer;
 
-        //protected ICloudTableWrapper<JobInfoEntity> _jobInfoTable;
         private CloudTable _jobInfoTable;
         private CloudStorageAccount _storageAccount;
         private CloudTableClient _tableClient;
@@ -35,13 +33,16 @@ namespace AzureRepositoryPlugin
         private CloudBlobContainer _jobTemplateBlob;
         private CloudBlobContainer _jobDocumentBlob;
 
-        private readonly string PartitionKey = Guid.Empty.ToString();
+        private readonly string _partitionKey = Guid.Empty.ToString();
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(AzureStorageManager));
 
         public AzureStorageManager()
         {
             _storageConnectionString = ConfigurationManager.AppSettings["AzureRepository:StorageConnectionString"];
+            JobInfoTableName = ConfigurationManager.AppSettings["AzureRepository:RestJobInfoTable"];
+            _templateContainer = ConfigurationManager.AppSettings["AzureRepository:TemplateContainer"];
+            _documentContainer = ConfigurationManager.AppSettings["AzureRepository:DocumentContainer"];
         }
 
         public void Init()
@@ -51,14 +52,14 @@ namespace AzureRepositoryPlugin
                 _storageAccount = CloudStorageAccount.Parse(_storageConnectionString);
                 _tableClient = _storageAccount.CreateCloudTableClient();
 
-                _jobInfoTable = _tableClient.GetTableReference(JOB_INFO_TABLE_NAME);
+                _jobInfoTable = _tableClient.GetTableReference(JobInfoTableName);
                 _jobInfoTable.CreateIfNotExists();
 
                 _blobClient = _storageAccount.CreateCloudBlobClient();
-                _jobTemplateBlob = _blobClient.GetContainerReference(TEMPLATE_CONTAINER);
+                _jobTemplateBlob = _blobClient.GetContainerReference(_templateContainer);
                 _jobTemplateBlob.CreateIfNotExists();
 
-                _jobDocumentBlob = _blobClient.GetContainerReference(DOCUMENT_CONTAINER);
+                _jobDocumentBlob = _blobClient.GetContainerReference(_documentContainer);
                 _jobDocumentBlob.CreateIfNotExists();
             } catch(StorageException e)
             {
@@ -72,7 +73,7 @@ namespace AzureRepositoryPlugin
         public async Task<bool> AddRequest(JobRequestData request)
         {
             // Add a request to storage
-            JobInfoEntity entity = JobInfoEntity.FromJobRequestData(request, PartitionKey);
+            JobInfoEntity entity = JobInfoEntity.FromJobRequestData(request, _partitionKey);
             entity.Status = (int)RepositoryStatus.JOB_STATUS.Pending;
 
             var op = TableOperation.Insert(entity);
@@ -86,7 +87,7 @@ namespace AzureRepositoryPlugin
 
 
             // Upload template to blob storage
-            await UploadBlob<Template>(request.Template, entity.JobId.ToString(), TEMPLATE_CONTAINER);
+            await UploadBlob<Template>(request.Template, entity.JobId.ToString(), _templateContainer);
 
             if (success)
                 Log.Debug($"Added template [{request.Template.Guid}] to blob storage");
@@ -135,7 +136,7 @@ namespace AzureRepositoryPlugin
 
 
             // Upload generated document to blob
-            await UploadBlob<T>(generatedEntity, entity.JobId.ToString(), DOCUMENT_CONTAINER);
+            await UploadBlob<T>(generatedEntity, entity.JobId.ToString(), _documentContainer);
 
             if (success)
                 Log.Debug($"Added generated entity [{requestId}] status to blob storage");
@@ -272,25 +273,25 @@ namespace AzureRepositoryPlugin
         public async Task<Document> GetGeneratedReport(Guid requestId)
         {
             // get generated report from blob storage
-            return await GetEntityFromBlob<Document>(requestId, DOCUMENT_CONTAINER);
+            return await GetEntityFromBlob<Document>(requestId, _documentContainer);
         }
 
         public async Task<ServiceError> GetError(Guid requestId)
         {
             // get error from blob storage
-            return await GetEntityFromBlob<ServiceError>(requestId, DOCUMENT_CONTAINER);
+            return await GetEntityFromBlob<ServiceError>(requestId, _documentContainer);
         }
 
         public async Task<Metrics> GetMetrics(Guid requestId)
         {
             // get metrics from blob storage
-            return await GetEntityFromBlob<Metrics>(requestId, DOCUMENT_CONTAINER);
+            return await GetEntityFromBlob<Metrics>(requestId, _documentContainer);
         }
 
         public async Task<TagTree> GetTagTree(Guid requestId)
         {
             // get tag tree from blob storage
-            return await GetEntityFromBlob<TagTree>(requestId, DOCUMENT_CONTAINER);
+            return await GetEntityFromBlob<TagTree>(requestId, _documentContainer);
         }
 
         public async Task<JobRequestData> GetOldestPendingJobAndGenerate()
@@ -323,7 +324,7 @@ namespace AzureRepositoryPlugin
             Log.Info($"Updated job entity [{oldestEntity.JobId}] to generating.");
 
             // Get the template for this job
-            Template template = await GetEntityFromBlob<Template>(oldestEntity.JobId, TEMPLATE_CONTAINER);
+            Template template = await GetEntityFromBlob<Template>(oldestEntity.JobId, _templateContainer);
 
             return new JobRequestData
             {
@@ -335,7 +336,7 @@ namespace AzureRepositoryPlugin
         private async Task<T> GetEntityFromBlob<T>(Guid id, string container)
         {
             CloudBlockBlob blob = null;
-            if(container.Equals(TEMPLATE_CONTAINER))
+            if(container.Equals(_templateContainer))
             {
                 blob = _jobTemplateBlob.GetBlockBlobReference(id.ToString());
             } 
@@ -365,7 +366,7 @@ namespace AzureRepositoryPlugin
             try
             {
                 CloudBlockBlob blob = null;
-                if(containerName.Equals(TEMPLATE_CONTAINER))
+                if(containerName.Equals(_templateContainer))
                     blob = _jobTemplateBlob.GetBlockBlobReference(id);
                 else
                     blob = _jobDocumentBlob.GetBlockBlobReference(id);
