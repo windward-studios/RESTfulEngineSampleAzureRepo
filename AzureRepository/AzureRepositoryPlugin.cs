@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 
 namespace AzureRepository
 {
@@ -30,14 +31,16 @@ namespace AzureRepository
 
         private IJobHandler JobHandler { get; set; }
 
-        private static readonly ILog Log = LogManager.GetLogger(typeof(AzureRepositoryPlugin));
+        private static readonly ILog Log = LogManager.GetLogger("PluginLogger");
 
         private bool shutDown;
+        private bool runningOnIIS;
 
         private StorageManager StorageManager;
 
         public AzureRepositoryPlugin()
         {
+            runningOnIIS = HostingEnvironment.IsHosted;
             // Config value setup
             string num = ConfigurationManager.AppSettings["hours.delete.jobs"] ?? "";
             if (!int.TryParse(num, out int hours))
@@ -59,16 +62,21 @@ namespace AzureRepository
             StorageManager = new StorageManager();
 
             // Handle deleting old jobs
-            var tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
-            Task.Run(() => ManageOldRequests(token), token);
+            if(runningOnIIS)
+                HostingEnvironment.QueueBackgroundWorkItem(ct => ManageOldRequests(ct));
+            else
+            {
+                var tokenSource = new CancellationTokenSource();
+                var token = tokenSource.Token;
+                Task.Run(() => ManageOldRequests(token), token);
+            }
 
-            Log.Info("AzureRepositoryPlugin constructor finished");
+            Log.Info("[AzureRepoPlugin] AzureRepositoryPlugin constructor finished");
         }
 
         public string CreateRequest(Template template, RepositoryStatus.REQUEST_TYPE requestType)
         {
-            Log.Info("Create REquest Called");
+            Log.Info("[AzureRepoPlugin] Create REquest Called");
             var task = Task.Run(async () => await CreateRequestAsync(template, requestType));
             task.Wait();
             string guid = task.Result;
@@ -87,7 +95,7 @@ namespace AzureRepository
                 CreationDate = DateTime.UtcNow
             };
 
-            Log.Info($"Created request {jobData.Template.Guid}");
+            Log.Info($"[AzureRepoPlugin] Created request {jobData.Template.Guid}");
 
             AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             bool success = await storage.AddRequest(jobData);
@@ -97,9 +105,11 @@ namespace AzureRepository
                 Log.Error($"Failed to add job request [{jobData.Template.Guid}] to storage");
             }
 
-            Log.Info($"Added job request [{jobData.Template.Guid}] to storage");
+            Log.Info($"[AzureRepoPlugin] Added job request [{jobData.Template.Guid}] to storage");
 
             //await _producer.Publish(jobData);
+
+            Log.Info($"[AzureRepoPlugin] Is job handler is null in create request: {JobHandler == null}");
 
             JobHandler?.Signal();
 
@@ -108,10 +118,11 @@ namespace AzureRepository
 
         public RepositoryRequest TakeRequest()
         {
-            Log.Info("Take request called");
+            Log.Info("[AzureRepoPlugin] Take request called");
             var task = Task.Run(async () => await TakeRequestAsync());
             task.Wait();
             RepositoryRequest ret = task.Result;
+            Log.Info($"[AzureRepoPlugin] Take request returned {ret}");
 
             return ret;
         }
@@ -119,10 +130,13 @@ namespace AzureRepository
         private async Task<RepositoryRequest> TakeRequestAsync()
         {
             AzureStorageManager storage = StorageManager.GetAzureStorageManager();
-            Log.Info($"Log storage is null: {storage == null}");
+            Log.Info($"[AzureRepoPlugin] Log storage is null: {storage == null}");
             JobRequestData job = await storage.GetOldestPendingJobAndGenerate();
 
-            Log.Info($"Took reqest {job.Template.Guid}");
+            if (job != null)
+                Log.Info($"[AzureRepoPlugin] Took reqest {job.Template.Guid}");
+            else
+                Log.Info($"[AzureRepoPlugin] Took request NULL");
 
             if (job == null)
                 return null;
@@ -242,7 +256,7 @@ namespace AzureRepository
 
             result = await storage.CompleteRequest(Guid.Parse(template.Guid), error);
             if (result)
-                Log.Debug($"Successfully saved error {template.Guid}");
+                Log.Debug($"[AzureRepoPlugin] Successfully saved error {template.Guid}");
             else
                 Log.Error($"Failed to save error {template.Guid}");
         }
@@ -259,7 +273,7 @@ namespace AzureRepository
             AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.CompleteRequest(Guid.Parse(template.Guid), metrics);
             if (result)
-                Log.Debug($"Successfully saved metrics {template.Guid}");
+                Log.Debug($"[AzureRepoPlugin] Successfully saved metrics {template.Guid}");
             else
                 Log.Error($"Failed to save metrics {template.Guid}");
         }
@@ -276,7 +290,7 @@ namespace AzureRepository
             AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.CompleteRequest(Guid.Parse(template.Guid), document);
             if (result)
-                Log.Debug($"Successfully saved document {template.Guid}");
+                Log.Debug($"[AzureRepoPlugin] Successfully saved document {template.Guid}");
             else
                 Log.Error($"Failed to save document {template.Guid}");
         }
@@ -293,7 +307,7 @@ namespace AzureRepository
             AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             var result = await storage.CompleteRequest(Guid.Parse(template.Guid), tree);
             if (result)
-                Log.Debug($"Successfully saved tag tree {template.Guid}");
+                Log.Debug($"[AzureRepoPlugin] Successfully saved tag tree {template.Guid}");
             else
                 Log.Error($"Failed to save tag tree {template.Guid}");
         }
@@ -301,17 +315,17 @@ namespace AzureRepository
         public void SetJobHandler(IJobHandler handler)
         {
             if (Log.IsDebugEnabled)
-                Log.Debug($"SetJobHandler({handler})");
+                Log.Debug($"[AzureRepoPlugin] SetJobHandler({handler})");
             JobHandler = handler;
         }
 
         public void ShutDown()
         {
-            Log.Debug("AzureRepositoryPlugin.ShutDown() started...");
+            Log.Debug("[AzureRepoPlugin] AzureRepositoryPlugin.ShutDown() started...");
             shutDown = true;
             //_producer.Stop();
 
-            Log.Debug("AzureRepositoryPlugin bus stopped");
+            Log.Debug("[AzureRepoPlugin] AzureRepositoryPlugin bus stopped");
 
             // Need to set all generating requests in azure storage back to pending
             var task = Task.Run(async () => await ShutDownAsync());
@@ -323,7 +337,7 @@ namespace AzureRepository
             AzureStorageManager storage = StorageManager.GetAzureStorageManager();
             bool success = await storage.RevertGeneratingJobsToPending();
             if (success)
-                Log.Debug("All generating jobs reverted to pending");
+                Log.Debug("[AzureRepoPlugin] All generating jobs reverted to pending");
             return success;
         }
 
@@ -350,7 +364,7 @@ namespace AzureRepository
                 using (HttpClient client = new HttpClient())
                 using (HttpResponseMessage response = client.PostAsync(url, null).Result)
                     if (response.StatusCode != HttpStatusCode.OK && Log.IsInfoEnabled)
-                        Log.Info($"Callback to {url} returned status code {response.StatusCode}");
+                        Log.Info($"[AzureRepoPlugin] Callback to {url} returned status code {response.StatusCode}");
             }
             catch (Exception ex)
             {
@@ -374,7 +388,7 @@ namespace AzureRepository
                 WaitHandle.WaitAny(new WaitHandle[] { ct.WaitHandle }, timeSpanCheckOldJobs, false);
             }
             if (Log.IsDebugEnabled)
-                Log.Debug("FileSystemRepository management worker stopped");
+                Log.Debug("[AzureRepoPlugin] FileSystemRepository management worker stopped");
         }
 
         private DocumentMeta SetReportMeta(Document genDoc)
