@@ -296,41 +296,48 @@ namespace AzureRepositoryPlugin
 
         public async Task<JobRequestData> GetOldestPendingJobAndGenerate()
         {
-            Log.Info($"[AzureStorageManager] In GetOldestPendingJobAndGenerate()");
-            TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.Equal, (int)RepositoryStatus.JOB_STATUS.Pending));
-
-            List<JobInfoEntity> entities = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery).ToList();
-            Log.Info($"[AzureStorageManager] Number of entities returned: {entities.Count}");
-            if (entities.Count == 0)
-                return null;
-
-            JobInfoEntity oldestEntity = entities.OrderBy(d => d.CreationDate).ToArray().FirstOrDefault();
-            Log.Info($"[AzureStorageManager] Oldest entity retrieved: {oldestEntity.JobId}");
-
-            // Set this entity to locked so no others use it and set to generating
-            oldestEntity.Status = (int)RepositoryStatus.JOB_STATUS.Generating;
-            var op = TableOperation.Replace(oldestEntity);
-            TableResult result = await _jobInfoTable.ExecuteAsync(op);
-            bool success = result.HttpStatusCode == 204;
-
-            if (!success)
+            try
             {
-                Log.Error($"[AzureStorageManger] Failed to update job entity [{oldestEntity.JobId}] to generating.");
+                Log.Info($"[AzureStorageManager] In GetOldestPendingJobAndGenerate()");
+                TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.Equal, (int)RepositoryStatus.JOB_STATUS.Pending));
+
+                List<JobInfoEntity> entities = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery).ToList();
+                Log.Info($"[AzureStorageManager] Number of entities returned: {entities.Count}");
+                if (entities.Count == 0)
+                    return null;
+
+                JobInfoEntity oldestEntity = entities.OrderBy(d => d.CreationDate).ToArray().FirstOrDefault();
+                Log.Info($"[AzureStorageManager] Oldest entity retrieved: {oldestEntity.JobId}");
+
+                // Set this entity to locked so no others use it and set to generating
+                oldestEntity.Status = (int)RepositoryStatus.JOB_STATUS.Generating;
+                var op = TableOperation.Replace(oldestEntity);
+                TableResult result = await _jobInfoTable.ExecuteAsync(op);
+                bool success = result.HttpStatusCode == 204;
+
+                if (!success)
+                {
+                    Log.Error($"[AzureStorageManger] Failed to update job entity [{oldestEntity.JobId}] to generating.");
+                    return null;
+                }
+
+                Log.Info($"[AzureStorageManger] Updated job entity [{oldestEntity.JobId}] to generating.");
+
+                // Get the template for this job
+                Template template = await GetEntityFromBlob<Template>(oldestEntity.JobId, _templateContainer);
+
+                Log.Info($"[AzureStorageManager] Got the template from blob storage");
+
+                return new JobRequestData
+                {
+                    Template = template,
+                    RequestType = (RepositoryStatus.REQUEST_TYPE)oldestEntity.Type
+                };
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureSTorageManager] Exception in GetOldestPendingJobAndGenerate: {e.Message}");
                 return null;
             }
-
-            Log.Info($"[AzureStorageManger] Updated job entity [{oldestEntity.JobId}] to generating.");
-
-            // Get the template for this job
-            Template template = await GetEntityFromBlob<Template>(oldestEntity.JobId, _templateContainer);
-
-            Log.Info($"[AzureStorageManager] Got the template from blob storage");
-
-            return new JobRequestData
-            {
-                Template = template,
-                RequestType = (RepositoryStatus.REQUEST_TYPE)oldestEntity.Type
-            };
         }
 
         private async Task<T> GetEntityFromBlob<T>(Guid id, string container)

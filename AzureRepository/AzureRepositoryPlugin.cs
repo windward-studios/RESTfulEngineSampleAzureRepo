@@ -77,10 +77,17 @@ namespace AzureRepository
         public string CreateRequest(Template template, RepositoryStatus.REQUEST_TYPE requestType)
         {
             Log.Info("[AzureRepoPlugin] Create REquest Called");
-            var task = Task.Run(async () => await CreateRequestAsync(template, requestType));
-            task.Wait();
-            string guid = task.Result;
-            return guid;
+            try
+            {
+                var task = Task.Run(async () => await CreateRequestAsync(template, requestType));
+                task.Wait();
+                string guid = task.Result;
+                return guid;
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlguin] Exception in CreateRequest: {e.Message}");
+                return null;
+            }
         }
 
         public async Task<string> CreateRequestAsync(Template template, RepositoryStatus.REQUEST_TYPE requestType)
@@ -103,13 +110,10 @@ namespace AzureRepository
             if (!success)
             {
                 Log.Error($"Failed to add job request [{jobData.Template.Guid}] to storage");
+                return null;
             }
 
             Log.Info($"[AzureRepoPlugin] Added job request [{jobData.Template.Guid}] to storage");
-
-            //await _producer.Publish(jobData);
-
-            Log.Info($"[AzureRepoPlugin] Is job handler is null in create request: {JobHandler == null}");
 
             JobHandler?.Signal();
 
@@ -119,12 +123,19 @@ namespace AzureRepository
         public RepositoryRequest TakeRequest()
         {
             Log.Info("[AzureRepoPlugin] Take request called");
-            var task = Task.Run(async () => await TakeRequestAsync());
-            task.Wait();
-            RepositoryRequest ret = task.Result;
-            Log.Info($"[AzureRepoPlugin] Take request returned {ret}");
+            try
+            {
+                var task = Task.Run(async () => await TakeRequestAsync());
+                task.Wait();
+                RepositoryRequest ret = task.Result;
+                Log.Info($"[AzureRepoPlugin] Take request returned {ret}");
 
-            return ret;
+                return ret;
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in TakeRequest: {e.Message}");
+                return null;
+            }
         }
 
         private async Task<RepositoryRequest> TakeRequestAsync()
@@ -146,8 +157,14 @@ namespace AzureRepository
 
         public void DeleteReport(string guid)
         {
-            var task = Task.Run(async () => await DeleteReportAsync(guid));
-            task.Wait();
+            try
+            {
+                var task = Task.Run(async () => await DeleteReportAsync(guid));
+                task.Wait();
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Excepition in DeleteReport {e.Message}");
+            }
         }
 
         private async Task<bool> DeleteReportAsync(string guid)
@@ -159,10 +176,17 @@ namespace AzureRepository
 
         public ServiceError GetError(string guid)
         {
-            var task = Task.Run<ServiceError>(async () => await GetErrorAsync(guid));
-            task.Wait();
-            ServiceError res = task.Result;
-            return res;
+            try
+            {
+                var task = Task.Run<ServiceError>(async () => await GetErrorAsync(guid));
+                task.Wait();
+                ServiceError res = task.Result;
+                return res;
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in GetError: {e.Message}");
+                return null;
+            }
         }
 
         private async Task<ServiceError> GetErrorAsync(string guid)
@@ -174,6 +198,13 @@ namespace AzureRepository
 
         public Metrics GetMetrics(string guid)
         {
+            try
+            {
+
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in GetMetrics: {e.Message}");
+            }
             var task = Task.Run<Metrics>(async () => await GetMetricsAsync(guid));
             task.Wait();
             Metrics res = task.Result;
@@ -189,10 +220,17 @@ namespace AzureRepository
 
         public Document GetReport(string guid)
         {
-            var task = Task.Run<Document>(async () => await GetReportAsync(guid));
-            task.Wait();
-            Document res = task.Result;
-            return res;
+            try
+            {
+                var task = Task.Run<Document>(async () => await GetReportAsync(guid));
+                task.Wait();
+                Document res = task.Result;
+                return res;
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in GetReport: {e.Message}");
+                return null;
+            }
         }
 
         private async Task<Document> GetReportAsync(string guid)
@@ -204,17 +242,31 @@ namespace AzureRepository
 
         public RequestStatus GetReportStatus(string guid)
         {
-            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
-            JobInfoEntity result = storage.GetRequestInfo(Guid.Parse(guid));
-            return new RequestStatus((RepositoryStatus.JOB_STATUS)result.Status, (RepositoryStatus.REQUEST_TYPE)result.Type);
+            try
+            {
+                AzureStorageManager storage = StorageManager.GetAzureStorageManager();
+                JobInfoEntity result = storage.GetRequestInfo(Guid.Parse(guid));
+                return new RequestStatus((RepositoryStatus.JOB_STATUS)result.Status, (RepositoryStatus.REQUEST_TYPE)result.Type);
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in GetReportStatus: {e.Message}");
+                return null;
+            }
         }
 
         public TagTree GetTagTree(string guid)
         {
-            var task = Task.Run<TagTree>(async () => await GetTagTreeAsync(guid));
-            task.Wait();
-            TagTree res = task.Result;
-            return res;
+            try
+            {
+                var task = Task.Run<TagTree>(async () => await GetTagTreeAsync(guid));
+                task.Wait();
+                TagTree res = task.Result;
+                return res;
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in GetTagTree: {e.Message}");
+                return null;
+            }
         }
 
         private async Task<TagTree> GetTagTreeAsync(string guid)
@@ -225,10 +277,17 @@ namespace AzureRepository
         }
         public DocumentMeta GetReportMeta(string guid)
         {
-            var task = Task.Run<DocumentMeta>(async () => await GetReportMetaAsync(guid));
-            task.Wait();
-            DocumentMeta res = task.Result;
-            return res;
+            try
+            {
+                var task = Task.Run<DocumentMeta>(async () => await GetReportMetaAsync(guid));
+                task.Wait();
+                DocumentMeta res = task.Result;
+                return res;
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in GetReportMeta: {e.Message}");
+                return null;
+            }
         }
 
         public async Task<DocumentMeta> GetReportMetaAsync(string guid)
@@ -242,9 +301,15 @@ namespace AzureRepository
 
         public void SaveError(Template template, ServiceError error)
         {
-            var task = Task.Run(async () => await SaveErrorAsync(template, error));
-            task.Wait();
-            CompleteJob(template);
+            try
+            {
+                var task = Task.Run(async () => await SaveErrorAsync(template, error));
+                task.Wait();
+                CompleteJob(template);
+            } catch(Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in SaveError: {e.Message}");
+            }
         }
 
         private async Task SaveErrorAsync(Template template, ServiceError error)
@@ -263,9 +328,16 @@ namespace AzureRepository
 
         public void SaveMetrics(Template template, Metrics metrics)
         {
-            var task = Task.Run(async () => await SaveMetricsAsync(template, metrics));
-            task.Wait();
-            CompleteJob(template);
+            try
+            {
+                var task = Task.Run(async () => await SaveMetricsAsync(template, metrics));
+                task.Wait();
+                CompleteJob(template);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in SaveMetrics: {e.Message}");
+            }
         }
 
         private async Task SaveMetricsAsync(Template template, Metrics metrics)
@@ -280,9 +352,16 @@ namespace AzureRepository
 
         public void SaveReport(Template template, Document document)
         {
-            var task = Task.Run(async () => await SaveReportAsync(template, document));
-            task.Wait();
-            CompleteJob(template);
+            try
+            {
+                var task = Task.Run(async () => await SaveReportAsync(template, document));
+                task.Wait();
+                CompleteJob(template);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in SaveReport: {e.Message}");
+            }
         }
 
         private async Task SaveReportAsync(Template template, Document document)
@@ -297,9 +376,16 @@ namespace AzureRepository
 
         public void SaveTagTree(Template template, TagTree tree)
         {
-            var task = Task.Run(async () => await SaveTagTreeAsync(template, tree));
-            task.Wait();
-            CompleteJob(template);
+            try
+            {
+                var task = Task.Run(async () => await SaveTagTreeAsync(template, tree));
+                task.Wait();
+                CompleteJob(template);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in SaveTagTree: {e.Message}");
+            }
         }
 
         private async Task SaveTagTreeAsync(Template template, TagTree tree)
@@ -343,8 +429,15 @@ namespace AzureRepository
 
         private void DeleteOldJobs(DateTime cutoff)
         {
-            var task = Task.Run(async () => await DeleteOldJobsAsync(cutoff));
-            task.Wait();
+            try
+            {
+                var task = Task.Run(async () => await DeleteOldJobsAsync(cutoff));
+                task.Wait();
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[AzureRepoPlugin] Exception in DeleteOldJobs: {e.Message}");
+            }
         }
 
         private async Task DeleteOldJobsAsync(DateTime cutoff)
@@ -379,6 +472,7 @@ namespace AzureRepository
             {
                 if (datetimeLastCheckOldJobs + timeSpanCheckOldJobs < DateTime.Now)
                 {
+                    Log.Info("[AzureRepoPlugin] Deleting old jobs");
                     DateTime cutoff = DateTime.Now - timeSpanDeleteOldJobs;
                     DeleteOldJobs(cutoff);
                     datetimeLastCheckOldJobs = DateTime.Now;

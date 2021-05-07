@@ -98,7 +98,6 @@ namespace AzureRepository
 		private void ManageWorkers(CancellationToken ct)
 		{
 			Log.Info("[CustomBGWorker] In ManageWorkers");
-			Log.Info($"[CustomBGWorker] Is Cancelllation requested: {ct.IsCancellationRequested}");
 			while ((! shutDown) && (! ct.IsCancellationRequested))
 			{
 				StartWaitingJobs();
@@ -117,8 +116,11 @@ namespace AzureRepository
 		/// </summary>
 		public void Signal()
 		{
-			Log.Info($"[CustomBGWorker] Signal was called; threads available = {maxThreads - numThreadsRunning}");
-			eventSignal.Set();
+			bool success = eventSignal.Set();
+			if (success)
+				Log.Info($"[CustomBGWorker] Signal was called SUCCESSFULLY; threads available = {maxThreads - numThreadsRunning}");
+			else
+				Log.Warn($"[CustomBGWorker] Signal was called UNSUCCESSFULLY");
 		}
 
 		/// <summary>
@@ -141,7 +143,7 @@ namespace AzureRepository
 			{
 				if (shutDown)
 				{
-					Log.Info("[CustomBGWorker] Returne dform STartWaitingJobs bc shutDown = true");
+					Log.Info("[CustomBGWorker] Returned from StartWaitingJobs bc shutDown = true");
 					return;
 				}
 
