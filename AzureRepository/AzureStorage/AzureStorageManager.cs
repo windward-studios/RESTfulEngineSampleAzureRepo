@@ -301,18 +301,45 @@ namespace AzureRepositoryPlugin
                 Log.Info($"[AzureStorageManager] In GetOldestPendingJobAndGenerate()");
                 TableQuery<JobInfoEntity> tableQuery = new TableQuery<JobInfoEntity>().Where(TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.Equal, (int)RepositoryStatus.JOB_STATUS.Pending));
 
-                List<JobInfoEntity> entities = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery).ToList();
-                Log.Info($"[AzureStorageManager] Number of entities returned: {entities.Count}");
-                if (entities.Count == 0)
-                    return null;
+                List<JobInfoEntity> entities;
+                JobInfoEntity oldestEntity = null;
 
-                JobInfoEntity oldestEntity = entities.OrderBy(d => d.CreationDate).ToArray().FirstOrDefault();
-                Log.Info($"[AzureStorageManager] Oldest entity retrieved: {oldestEntity.JobId}");
+                bool fourTwelveEx = true;
+                TableResult result = null;
+                while(fourTwelveEx)
+                {
+                    try
+                    { 
+                        entities = _jobInfoTable.ExecuteQuery<JobInfoEntity>(tableQuery).ToList();
 
-                // Set this entity to locked so no others use it and set to generating
-                oldestEntity.Status = (int)RepositoryStatus.JOB_STATUS.Generating;
-                var op = TableOperation.Replace(oldestEntity);
-                TableResult result = await _jobInfoTable.ExecuteAsync(op);
+                        Log.Info($"[AzureStorageManager] Number of entities returned: {entities.Count}");
+                        if (entities.Count == 0)
+                            return null;
+
+                        oldestEntity = entities.OrderBy(d => d.CreationDate).ToArray().FirstOrDefault();
+                        Log.Info($"[AzureStorageManager] Oldest entity retrieved: {oldestEntity.JobId}");
+
+                        // Set this entity to locked so no others use it and set to generating
+                        oldestEntity.Status = (int)RepositoryStatus.JOB_STATUS.Generating;
+                        var op = TableOperation.Replace(oldestEntity);
+                        result = await _jobInfoTable.ExecuteAsync(op);
+                        fourTwelveEx = false;
+                    } 
+                    catch(StorageException ex)
+                    {
+                        if(ex.RequestInformation.HttpStatusCode == 412)
+                        {
+                            Log.Warn("[AzureStorageManager] Entity has changed since it was retrieved. Trying again");
+                            continue;
+                        } 
+                        else
+                        {
+                            Log.Error($"[AzureSTorageManager] StorageException in GetOldestPendingJobAndGenerate: {ex.Message}");
+                            return null;
+                        }
+                    }
+                }
+
                 bool success = result.HttpStatusCode == 204;
 
                 if (!success)
