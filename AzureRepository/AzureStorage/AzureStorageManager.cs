@@ -123,11 +123,6 @@ namespace AzureRepositoryPlugin
             // Upload generated document to blob
             await UploadBlob<T>(generatedEntity, entity.JobId.ToString(), _documentContainer);
 
-            if (success)
-                Log.Debug($"Added generated entity [{requestId}] status to blob storage");
-            else
-                Log.Error($"Failed to add generated entity [{requestId}] to blob storage");
-
             if(generatedEntity is ServiceError)
                 entity.Status = (int)RepositoryStatus.JOB_STATUS.Error;
             else
