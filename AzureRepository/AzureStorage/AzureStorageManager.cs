@@ -120,6 +120,14 @@ namespace AzureRepositoryPlugin
             // Set status to complete and add final document to blob
             JobInfoEntity entity = GetRequestInfo(requestId);
 
+            // Upload generated document to blob
+            await UploadBlob<T>(generatedEntity, entity.JobId.ToString(), _documentContainer);
+
+            if (success)
+                Log.Debug($"Added generated entity [{requestId}] status to blob storage");
+            else
+                Log.Error($"Failed to add generated entity [{requestId}] to blob storage");
+
             if(generatedEntity is ServiceError)
                 entity.Status = (int)RepositoryStatus.JOB_STATUS.Error;
             else
@@ -133,15 +141,6 @@ namespace AzureRepositoryPlugin
                 Log.Debug($"Updated request [{requestId}] status to Complete");
             else
                 Log.Error($"Failed to update request [{requestId}] status to Complete: {result.HttpStatusCode}");
-
-
-            // Upload generated document to blob
-            await UploadBlob<T>(generatedEntity, entity.JobId.ToString(), _documentContainer);
-
-            if (success)
-                Log.Debug($"Added generated entity [{requestId}] status to blob storage");
-            else
-                Log.Error($"Failed to add generated entity [{requestId}] to blob storage");
 
             return success;
         }
