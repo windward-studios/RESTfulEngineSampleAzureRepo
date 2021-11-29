@@ -2,9 +2,6 @@
 using AzureRepositoryPlugin.AzureStorage;
 using log4net;
 using Newtonsoft.Json;
-using RESTfulEngine.BusinessLogic;
-using RESTfulEngine.DocumentRepository;
-using RESTfulEngine.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,6 +12,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
+using WindwardModels;
+using WindwardRepository;
 
 namespace AzureRepository
 {

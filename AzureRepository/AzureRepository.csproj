@@ -207,6 +207,14 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+    <Reference Include="WindwardModels, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f7cddcd489c5422a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Users\KyleR\Downloads\WindwardModels.dll</HintPath>
+    </Reference>
+    <Reference Include="WindwardRepository, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f91c6ddcf5d1bb95, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Users\KyleR\Downloads\WindwardRepository.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />

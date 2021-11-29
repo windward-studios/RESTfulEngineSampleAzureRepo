@@ -16,6 +16,7 @@ using System.Web.Hosting;
 using log4net;
 using RESTfulEngine.BusinessLogic;
 using RESTfulEngine.DocumentRepository;
+using WindwardRepository;
 
 namespace AzureRepository
 {
@@ -49,6 +50,10 @@ namespace AzureRepository
 		/// The number of threads we have running. ONLY access this using Interlocked.Incrment/Decrement.
 		/// </summary>
 		private int numThreadsRunning;
+
+		private ReportGenerator reportGen = new ReportGenerator();
+		private MetricsGenerator metricsGen = new MetricsGenerator();
+		private TagTreeGenerator tagTreeGen = new TagTreeGenerator();
 
 		private static readonly ILog Log = LogManager.GetLogger("PluginLogger");
 
@@ -196,13 +201,13 @@ namespace AzureRepository
 					switch (job.Type)
 					{
 						case RepositoryStatus.REQUEST_TYPE.DocGen:
-							ReportGenerator.Generate(job.Template);
+							reportGen.Generate(job.Template);
 							break;
 						case RepositoryStatus.REQUEST_TYPE.Metrics:
-							ToolsGenerator.Metrics(job.Template);
+							metricsGen.Metrics(job.Template);
 							break;
 						case RepositoryStatus.REQUEST_TYPE.TagTree:
-							ToolsGenerator.TagTree(job.Template);
+							tagTreeGen.TagTree(job.Template);
 							break;
 						default:
 							Log.Error($"Requested unknown job {job}");
