@@ -50,7 +50,10 @@ steps:
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)/publish/RESTfulEngine/bin'
-    Contents: 'RESTfulEngine.dll'
+    Contents: |
+      'RESTfulEngine.dll'
+      'WindwardModels.dll'
+      'WindwardRepository.dll'
     TargetFolder: '$(Build.SourcesDirectory)/temp/'
   displayName: Copy RESTfulEngine.dll to temp direcotry
 
@@ -96,7 +99,10 @@ steps:
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)/temp'
-    Contents: 'RESTfulEngine.dll'
+    Contents: |
+      'RESTfulEngine.dll'
+      'WindwardModels.dll'
+      'WindwardRepository.dll'
     TargetFolder: '$(Build.SourcesDirectory)/AzureRepository/bin/Release'
   displayName: Copy RESTfulEngine.dll to AzureRepository bin direcotry
 
