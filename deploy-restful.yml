@@ -50,10 +50,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)/publish/RESTfulEngine/bin'
-    Contents: |
-      'RESTfulEngine.dll'
-      'WindwardModels.dll'
-      'WindwardRepository.dll'
+    Contents: 'RESTfulEngine.dll'
     TargetFolder: '$(Build.SourcesDirectory)/temp/'
   displayName: Copy RESTfulEngine.dll to temp direcotry
 
