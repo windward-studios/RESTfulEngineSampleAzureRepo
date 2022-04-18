@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Microsoft.WindowsAzure.Storage.Blob;
 using WindwardRepository;
 using WindwardModels;
+using WindwardModels.src;
 
 namespace AzureRepositoryPlugin
 {
@@ -24,6 +25,7 @@ namespace AzureRepositoryPlugin
 
         private readonly string _templateContainer;
         private readonly string _documentContainer;
+        private readonly string _docPerformanceContainer;
 
         private CloudTable _jobInfoTable;
         private CloudStorageAccount _storageAccount;
@@ -43,6 +45,7 @@ namespace AzureRepositoryPlugin
             JobInfoTableName = ConfigurationManager.AppSettings["AzureRepositoryRestJobInfoTable"];
             _templateContainer = ConfigurationManager.AppSettings["AzureRepositoryTemplateContainer"];
             _documentContainer = ConfigurationManager.AppSettings["AzureRepositoryDocumentContainer"];
+            _docPerformanceContainer = ConfigurationManager.AppSettings["AzureRepositoryDocumentPerformanceContainer"];
         }
 
         public void Init()
@@ -405,6 +408,17 @@ namespace AzureRepositoryPlugin
             {
                 Log.Error($"Exception uploading blob: {e}");
             }
+        }
+
+        public async Task<DocumentPerformance> GetDocumentPerformance(Guid requestId)
+        {
+            return await GetEntityFromBlob<DocumentPerformance>(requestId, _docPerformanceContainer);
+        }
+
+        public async Task PostDocumentPerformance(DocumentPerformance data, string guid)
+        {
+            data.guid = guid;
+            await UploadBlob(data, guid, _docPerformanceContainer);
         }
     }
 }

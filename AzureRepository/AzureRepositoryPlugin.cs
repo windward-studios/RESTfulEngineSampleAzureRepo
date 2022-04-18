@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using WindwardModels;
+using WindwardModels.src;
 using WindwardRepository;
 
 namespace AzureRepository
@@ -287,6 +288,22 @@ namespace AzureRepository
                 Log.Error($"[AzureRepoPlugin] Exception in GetReportMeta: {e.Message}");
                 return null;
             }
+        }
+
+        public async void SaveDocumentPerformanceObject(DocumentPerformance data, string guid)
+        {
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
+            await storage.PostDocumentPerformance(data, guid);
+        }
+
+        public DocumentPerformance GetDocumentPerformance(string guid)
+        {
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
+            Task<DocumentPerformance> docPerfTask = storage.GetDocumentPerformance(Guid.Parse(guid));
+            docPerfTask.Wait();
+            DocumentPerformance docPerf = docPerfTask.Result;
+
+            return docPerf;
         }
 
         public async Task<DocumentMeta> GetReportMetaAsync(string guid)

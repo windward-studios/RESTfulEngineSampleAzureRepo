@@ -201,7 +201,7 @@ namespace AzureRepository
 					switch (job.Type)
 					{
 						case RepositoryStatus.REQUEST_TYPE.DocGen:
-							reportGen.Generate(job.Template);
+							reportGen.Generate(job.Template, repository);
 							break;
 						case RepositoryStatus.REQUEST_TYPE.Metrics:
 							metricsGen.Metrics(job.Template);
