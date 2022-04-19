@@ -71,6 +71,10 @@ steps:
       urls = [u.split('<Url>')[1] for u in xml.split('</Url>') if '<Url>' in u]
       [urlretrieve(u, '$(Build.SourcesDirectory)/dbconnectors' + u.split('/')[-1]) for u in urls]
 
+- script: |
+    dir dbconnectors
+  displayName: Show dbconnectors contents
+
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)/dbconnectors'
