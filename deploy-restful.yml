@@ -69,7 +69,7 @@ steps:
       from urllib.request import urlretrieve
       xml = requests.get('https://hubdocumentstorage.blob.core.windows.net/restful-engine-dlls?restype=container&comp=list').text
       urls = [u.split('<Url>')[1] for u in xml.split('</Url>') if '<Url>' in u]
-      [urlretrieve(u, '$(Build.SourcesDirectory)/dbconnectors' + u.split('/')[-1]) for u in urls]
+      [urlretrieve(u, '$(Build.SourcesDirectory)/dbconnectors/' + u.split('/')[-1]) for u in urls]
 
 - script: |
     dir dbconnectors
