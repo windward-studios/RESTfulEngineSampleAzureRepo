@@ -41,7 +41,7 @@ steps:
     archiveFilePatterns: 'RESTfulEngine.zip'
     destinationFolder: '$(Build.SourcesDirectory)/publish'
     cleanDestinationFolder: true
-    overwriteExistingFiles: false
+    overwriteExistingFiles: true
 
 - script: |
     mkdir temp
@@ -120,7 +120,7 @@ steps:
     SourceFolder: '$(Build.SourcesDirectory)/AzureRepository/bin/Release/'
     Contents: '**'
     TargetFolder: '$(Build.SourcesDirectory)/finalPublish/RESTfulEngine/bin'
-    OverWrite: true
+    OverWrite: false
   displayName: Copy AzureRepository bin contents to restfulengine bin
 
 - task: PublishBuildArtifacts@1 
