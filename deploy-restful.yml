@@ -41,7 +41,7 @@ steps:
     archiveFilePatterns: 'RESTfulEngine.zip'
     destinationFolder: '$(Build.SourcesDirectory)/publish'
     cleanDestinationFolder: true
-    overwriteExistingFiles: true
+    overwriteExistingFiles: false
 
 - script: |
     mkdir temp
@@ -57,8 +57,11 @@ steps:
     TargetFolder: '$(Build.SourcesDirectory)/temp/'
   displayName: Copy RESTfulEngine.dll to temp direcotry
 
+- script: |
+    mkdir dbconnectors
+  displayName: Create dbconnectors Dir
 - task: PythonScript@0
-  displayName: 'Download Dlls'
+  displayName: 'Download Db Connector Dlls'
   inputs:
     scriptSource: 'inline'
     script: |
@@ -66,7 +69,15 @@ steps:
       from urllib.request import urlretrieve
       xml = requests.get('https://hubdocumentstorage.blob.core.windows.net/restful-engine-dlls?restype=container&comp=list').text
       urls = [u.split('<Url>')[1] for u in xml.split('</Url>') if '<Url>' in u]
-      [urlretrieve(u, '$(Build.SourcesDirectory)/publish/RESTfulEngine/bin/' + u.split('/')[-1]) for u in urls]
+      [urlretrieve(u, '$(Build.SourcesDirectory)/dbconnectors' + u.split('/')[-1]) for u in urls]
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/dbconnectors'
+    Contents: '**'
+    TargetFolder: '$(Build.SourcesDirectory)/publish/RESTfulEngine/bin/'
+    OverWrite: false
+  displayName: Copy db connectors into place (don't overwrite existing dlls)
 
 - task: CopyFiles@2
   inputs:
