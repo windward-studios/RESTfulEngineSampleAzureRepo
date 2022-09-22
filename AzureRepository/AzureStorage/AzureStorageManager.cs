@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using Microsoft.WindowsAzure.Storage.Blob;
 using WindwardRepository;
 using WindwardModels;
-using WindwardModels.src;
 
 namespace AzureRepositoryPlugin
 {
@@ -366,27 +365,25 @@ namespace AzureRepositoryPlugin
 
         private async Task<T> GetEntityFromBlob<T>(Guid id, string container)
         {
-            CloudBlockBlob blob = null;
-            if(container.Equals(_templateContainer))
-            {
-                blob = _jobTemplateBlob.GetBlockBlobReference(id.ToString());
-            } 
-            else
-            {
-                blob = _jobDocumentBlob.GetBlockBlobReference(id.ToString());
-            }
+            CloudBlockBlob blob = GetBlobContainerFromContainerName(container).GetBlockBlobReference(id.ToString());
 
-            if (!await blob.ExistsAsync())
+             if (!await blob.ExistsAsync())
             {
                 Log.Error($"Blob [{id}] does not exist in container {container}");
                 return default(T);
             }
-
+            
             MemoryStream memoryStream = new MemoryStream();
             await blob.DownloadToStreamAsync(memoryStream);
             string jsonBack = Encoding.UTF8.GetString(memoryStream.ToArray());
-            T ret = JsonConvert.DeserializeObject<T>(jsonBack);
+            var ret = JsonConvert.DeserializeObject<T>(jsonBack);
             return ret;
+        }
+
+        private CloudBlobContainer GetBlobContainerFromContainerName(string containerName)
+        {
+            var blob = containerName.Equals(_templateContainer) ? _jobTemplateBlob : _jobDocumentBlob;
+            return blob;
         }
 
         private async Task UploadBlob<T>(T target, string id, string containerName)
@@ -396,11 +393,7 @@ namespace AzureRepositoryPlugin
             byte[] byteData = Convert.FromBase64String(base64);
             try
             {
-                CloudBlockBlob blob = null;
-                if(containerName.Equals(_templateContainer))
-                    blob = _jobTemplateBlob.GetBlockBlobReference(id);
-                else
-                    blob = _jobDocumentBlob.GetBlockBlobReference(id);
+                CloudBlockBlob blob = GetBlobContainerFromContainerName(containerName).GetBlockBlobReference(id);
 
                 await blob.UploadFromByteArrayAsync(byteData, 0, data.Length);
             }
@@ -408,6 +401,19 @@ namespace AzureRepositoryPlugin
             {
                 Log.Error($"Exception uploading blob: {e}");
             }
+        }
+
+        private async Task DeleteBlob(Guid id, string containerName)
+        {
+            CloudBlockBlob blob = GetBlobContainerFromContainerName(containerName).GetBlockBlobReference(id.ToString());
+
+            if (!await blob.ExistsAsync())
+            {
+                Log.Error($"Blob [{id}] does not exist in container {containerName}");
+                return;
+            }
+
+            await blob.DeleteAsync();
         }
 
         public async Task<DocumentPerformance> GetDocumentPerformance(Guid requestId)
@@ -419,6 +425,21 @@ namespace AzureRepositoryPlugin
         {
             data.guid = guid;
             await UploadBlob(data, guid, _docPerformanceContainer);
+        }
+
+        public async Task PostCachedTemplate(CachedTemplate cachedTemplate)
+        {
+            await UploadBlob(cachedTemplate, cachedTemplate.TemplateID, _templateContainer);
+        }
+
+        public async Task<CachedTemplate> GetCachedTemplate(Guid guid)
+        {
+            return await GetEntityFromBlob<CachedTemplate>(guid, _templateContainer);
+        }
+
+        public async Task DeleteCachedTemplate(Guid guid)
+        {
+            await DeleteBlob(guid, _templateContainer);
         }
     }
 }

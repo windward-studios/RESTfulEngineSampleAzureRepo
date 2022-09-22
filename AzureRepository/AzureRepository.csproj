@@ -49,9 +49,8 @@
     <Content Include="ThirdPartyNotice.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="RESTfulEngine, Version=20.2.0.200, Culture=neutral, PublicKeyToken=848d92016238aabc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Matt\Downloads\RESTfulEngine\RESTfulEngine\bin\RESTfulEngine.dll</HintPath>
+    <Reference Include="RESTfulEngine">
+      <HintPath>..\..\..\Users\MatthewBinsfeld\Downloads\RESTfulEngine\bin\RESTfulEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -68,13 +67,11 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="WindwardModels, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f7cddcd489c5422a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Matt\Downloads\RESTfulEngine\RESTfulEngine\bin\WindwardModels.dll</HintPath>
+    <Reference Include="WindwardModels">
+      <HintPath>..\..\..\Users\MatthewBinsfeld\Downloads\RESTfulEngine\bin\WindwardModels.dll</HintPath>
     </Reference>
-    <Reference Include="WindwardRepository, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f91c6ddcf5d1bb95, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Matt\Downloads\RESTfulEngine\RESTfulEngine\bin\WindwardRepository.dll</HintPath>
+    <Reference Include="WindwardRepository">
+      <HintPath>..\..\..\Users\MatthewBinsfeld\Downloads\RESTfulEngine\bin\WindwardRepository.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

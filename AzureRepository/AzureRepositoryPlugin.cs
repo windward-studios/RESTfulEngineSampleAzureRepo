@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using WindwardModels;
-using WindwardModels.src;
 using WindwardRepository;
 
 namespace AzureRepository
@@ -304,6 +303,28 @@ namespace AzureRepository
             DocumentPerformance docPerf = docPerfTask.Result;
 
             return docPerf;
+        }
+
+        public async void SaveTemplate(CachedTemplate template)
+        {
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
+            await storage.PostCachedTemplate(template);
+        }
+
+        public CachedTemplate GetTemplate(string templateID)
+        {
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
+            Task<CachedTemplate> docPerfTask = storage.GetCachedTemplate(Guid.Parse(templateID));
+            docPerfTask.Wait();
+            CachedTemplate docPerf = docPerfTask.Result;
+
+            return docPerf;
+        }
+
+        public async void DeleteTemplate(string templateID)
+        {
+            AzureStorageManager storage = StorageManager.GetAzureStorageManager();
+            await storage.DeleteCachedTemplate(Guid.Parse(templateID));
         }
 
         public async Task<DocumentMeta> GetReportMetaAsync(string guid)
