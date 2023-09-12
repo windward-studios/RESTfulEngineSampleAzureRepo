@@ -395,7 +395,7 @@ namespace AzureRepositoryPlugin
             {
                 CloudBlockBlob blob = GetBlobContainerFromContainerName(containerName).GetBlockBlobReference(id);
 
-                await blob.UploadFromByteArrayAsync(byteData, 0, data.Length);
+                await blob.UploadFromByteArrayAsync(byteData, 0, byteData.Length);
             }
             catch (Exception e)
             {
